@@ -14,9 +14,14 @@ const userSchema = new mongoose.Schema({
     },
     phone : {
         type : Number,
-        required: true,
-        minlength:10
+        minlength:10,
+        default : 0
+    },
+    role : {
+        type : String,
+        default : user
     }
+
 })
 
 userSchema.pre('save', function (next) {
