@@ -6,8 +6,11 @@ const routers = require('./routes/routes')
 
 mongoConnect();
 const app = express()
-const port = 8000
+const port = process.env.PORT || 8000
 
+app.get('/',(req,res) => {
+    res.send('hello')
+})
 app.use(express.urlencoded({ extended: true }));
 app.use(cors())
 app.use(bodyParser.json())
