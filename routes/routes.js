@@ -3,8 +3,8 @@ const approute = express.Router()
 const userRoutes = require('../routes/user')
 const errorHandler = require('../helpers/errorHandlers')
 
-approute.use('/',(req,res) => {
-    res.json({mesage : 'hello'})
+approute.get('/',(req,res) => {
+    res.send('hello')
 })
 approute.use('/user',userRoutes)
 approute.use(errorHandler)
