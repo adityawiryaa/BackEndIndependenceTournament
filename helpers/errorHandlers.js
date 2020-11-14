@@ -32,5 +32,5 @@ module.exports = (err,req,res,next) => {
         
 
     }
-    res.status(code).json({success : false,data : message})
+    res.status(code).json({success : false, message})
 }
