@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema({
         required : true,
         minlength: 6,maxlength : 20
     },
+    username : {
+        type : String,
+        required : true
+    },
     phone : {
         type : Number,
         minlength:10,
@@ -26,9 +30,8 @@ const userSchema = new mongoose.Schema({
 
 userSchema.pre('save', function (next) {
     DataUser.findOne({ email: this.email})
-        .then( async user => {
-            const phone = await DataUser.findOne({phone : this.phone})
-            if (user || phone) next({name: 'ALREADY_EXIST' })
+        .then(user => {
+            if (user) next({name: 'ALREADY_EXIST' })
             else {
                 const salt = bcrypt.genSaltSync(10)
                 this.password = bcrypt.hashSync(this.password, salt)
