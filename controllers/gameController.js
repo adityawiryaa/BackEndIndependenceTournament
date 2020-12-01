@@ -8,13 +8,14 @@ class gameController {
                 name : req.body.name,
                 image : req.body.image
             })
-            if(dataGame) next({name : 'GAME_EXIST'})
+            if(dataGame) next({name : 'GAME_EXIST'}) 
+            else if(!req.body.name || !req.body.image) next({name : 'REQUIRED'})
             else {
                 game.save()
                 res.status(201).json({success : true, data : game})
             }
         }
-        catch{ next({name : 'GAME_FAILED'})}
+        catch{ next({name : 'REQUIRED'})}
     }
     static async listGame(req,res,next){
         try{
