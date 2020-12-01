@@ -4,92 +4,91 @@ const User = require('../models/UserData')
 class tournamenController {
     static async createTournament(req, res, next) {
         try {
-            
-        const dataTournament = await Tournament.findOne({ name: req.body.name })
-        if (dataTournament) next({ name: 'TOURNAMENT_EXIST' })
-        else {
-            const tournament = new Tournament({
-                name: req.body.name,
-                createBy: req.userID,
-                game: req.body.game,
-                age: req.body.age,
-                type: req.body.type,
-                start: req.body.start,
-                end: req.body.end,
-                maxuser: req.body.maxuser,
-                prize: {
-                    first: req.body.first,
-                    second: req.body.second,
-                    third: req.body.third
+
+            const dataTournament = await Tournament.findOne({ name: req.body.name })
+            if (dataTournament) next({ name: 'TOURNAMENT_EXIST' })
+            else {
+                const tournament = new Tournament({
+                    name: req.body.name,
+                    createBy: req.userID,
+                    game: req.body.game,
+                    age: req.body.age,
+                    type: req.body.type,
+                    start: req.body.start,
+                    end: req.body.end,
+                    maxuser: req.body.maxuser,
+                    prize: {
+                        first: req.body.first,
+                        second: req.body.second,
+                        third: req.body.third
+                    }
+                })
+                await tournament.save()
+                if (tournament.maxuser == 4 && tournament.type == 'single elimination') {
+                    const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name }, {
+                        $push: {
+                            stage1: {
+                                $each: [{ 'match': 1 }, { 'match': 2 },]
+                            },
+                            stage2: {
+                                $each: [{ 'match': 3 }]
+                            },
+                            bronzeMatch: {
+                                $each: [{ 'match': null }]
+                            }
+                        }
+                    }, { new: true })
+                    res.status(200).json({ success: true, data: generateBracket })
                 }
-            })
-            await tournament.save()
-            if (tournament.maxuser == 16 && tournament.type == 'single elimination') {
-                const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name },
-                    {
+                else if (tournament.maxuser == 8 && tournament.type == 'single elimination') {
+                    const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name }, {
                         $push: {
                             stage1: {
-                                $each: [{ 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }]
-                            }, stage2: {
-                                $each: [{ 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }]
-                            }, stage3: {
-                                $each: [{ 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }]
-                            }, stage4: {
-                                $each: [{ 'user': null }, { 'user': null }]
-                            }, stage5: {
-                                $each: [{ 'user': null }]
+                                $each: [{ 'match': 1 }, { 'match': 2 }, { 'match': 3 }, { 'match': 4 }]
+                            },
+                            stage2: {
+                                $each: [{ 'match': 5 }, { 'match': 6 }]
+                            },
+                            stage3: {
+                                $each: [{ 'match': 7 }]
+                            },
+                            bronzeMatch: {
+                                $each: [{ 'match': null }]
                             }
                         }
-                    },
-                    { new: true }
-                )
-                res.status(200).json({ success: true, data: generateBracket })
-            }
-            else if (tournament.maxuser == 8 && tournament.type == 'single elimination') {
-                const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name },
-                    {
+                    }, { new: true })
+                    res.status(200).json({ success: true, data: generateBracket })
+                }
+                else if (tournament.maxuser == 16 && tournament.type == 'single elimination') {
+                    const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name }, {
                         $push: {
                             stage1: {
-                                $each: [{ 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }]
-                            }, stage2: {
-                                $each: [{ 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }]
-                            }, stage3: {
-                                $each: [{ 'user': null }, { 'user': null }]
-                            }, stage4: {
-                                $each: [{ 'user': null }]
+                                $each: [{ 'match': 1 }, { 'match': 2 }, { 'match': 3 }, { 'match': 4 }, { 'match': 5 }, { 'match': 6 }, { 'match': 7 }, { 'match': 8 }]
+                            },
+                            stage2: {
+                                $each: [{ 'match': 9 }, { 'match': 10 }, { 'match': 11 }, { 'match': 12 }]
+                            },
+                            stage3: {
+                                $each: [{ 'match': 12 }, { 'match': 14 }]
+                            },
+                            stage4: {
+                                $each: [{ 'match': 15 }]
+                            },
+                            bronzeMatch: {
+                                $each: [{ 'match': null }]
                             }
                         }
-                    },
-                    { new: true }
-                )
-                res.status(200).json({ success: true, data: generateBracket })
-            }
-            else if (tournament.maxuser == 4 && tournament.type == 'single elimination') {
-                const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name },
-                    {
-                        $push: {
-                            stage1: {
-                                $each: [{ 'user': null }, { 'user': null }, { 'user': null }, { 'user': null }]
-                            }, stage2: {
-                                $each: [{ 'user': null }, { 'user': null }]
-                            }, stage3: {
-                                $each: [{ 'user': null }]
-                            }
-                        }
-                    },
-                    { new: true }
-                )
-                res.status(200).json({ success: true, data: generateBracket })
+                    }, { new: true })
+                    res.status(200).json({ success: true, data: generateBracket })
+                }
             }
         }
-        }
-        catch{next({name : 'REQUIRED'})}
+        catch { next({ name: 'REQUIRED' }) }
     }
 
     static async listTournament(req, res, next) {
         try {
             const tournament = await Tournament.find()
-            .populate('game')
             res.status(200).json({ success: true, data: tournament })
         }
         catch { next({ name: 'TOURNAMENT_FAILED' }) }
@@ -98,6 +97,7 @@ class tournamenController {
         const { tournamentID } = req.params
         try {
             const tournament = await Tournament.findById(tournamentID)
+            console.log(tournament.stage1.length)
             res.status(200).json({ success: true, data: tournament })
         }
         catch { next({ name: 'TOURNAMENT_FAILED' }) }
@@ -152,36 +152,47 @@ class tournamenController {
         const userAlready = tournament.stage1.find(element => element.user == req.body.user);
         if (tournament.createBy == req.userID && tournament.participant.length != tournament.maxuser) {
             if (found && !userAlready) {
-                const updateBracket = await Tournament.findOneAndUpdate({ 'stage1.user': null },
-                            {
-                                $set: { "stage1.$.user": req.body.user }
-                            }, { new: true })
-                        const dataTournament = await Tournament.findByIdAndUpdate(tournamentID,
-                            { $pull: { waitinglist: req.body.user }, $push: { participant: req.body.user } },
-                            { new: true }
-                        )
-                        await User.findOneAndUpdate({ _id: req.body.user },
-                            {
-                                $push: {
-                                    notification: {
-                                        $each: [{ 'notif': `You was accept in tournament ${tournament.name} ,Good Luck!`,"time" : new Date().toLocaleString() }]
-                                    }
-                                }
-                            },
-                            { new: true }
-                        )
-                        if (user.notification.length >= 5) {
-                            await User.findOneAndUpdate({ _id: req.body.user },
-                                { $pop: { notification: -1 } },
-                                { new: true }
-                            )
-                        }
-                        res.status(200).json({ success: true, data: dataTournament })
-                    }
-            else next({ name: 'USER_NOT_FOUND' })
+                const user1Update = await Tournament.findOne({ 'stage1.user1': null})
+                const user2Update = await Tournament.findOne({  'stage1.user2' : null})
+                if(user1Update) {
+                    await Tournament.findOneAndUpdate({ 'stage1.user1': null},
+                        {
+                            $set: { "stage1.$.user1": req.body.user }
+                        }, { new: true })
                 }
-        else next({ name: 'NOT_ACCESS' })
+                else if (user2Update){
+                    await Tournament.findOneAndUpdate({ 'stage1.user2': null},
+                        {
+                            $set: { "stage1.$.user2": req.body.user }
+                        }, { new: true })
+                    
+                }
+                const dataTournament = await Tournament.findByIdAndUpdate(tournamentID,
+                    { $pull: { waitinglist: req.body.user }, $push: { participant: req.body.user } },
+                    { new: true }
+                )
+                await User.findOneAndUpdate({ _id: req.body.user },
+                    {
+                        $push: {
+                            notification: {
+                                $each: [{ 'notif': `You was accept in tournament ${tournament.name} ,Good Luck!`, "time": new Date().toLocaleString() }]
+                            }
+                        }
+                    },
+                    { new: true }
+                )
+                if (user.notification.length >= 5) {
+                    await User.findOneAndUpdate({ _id: req.body.user },
+                        { $pop: { notification: -1 } },
+                        { new: true }
+                    )
+                }
+                res.status(200).json({ success: true, data: dataTournament })
             }
+            else next({ name: 'USER_NOT_FOUND' })
+        }
+        else next({ name: 'NOT_ACCESS' })
+    }
     static async rejectUser(req, res, next) {
         const { tournamentID } = req.params
         const tournament = await Tournament.findById(tournamentID)
@@ -194,11 +205,13 @@ class tournamenController {
                     { new: true }
                 )
                 await User.findOneAndUpdate({ _id: req.body.user },
-                    { $push: {
-                        notification: {
-                            $each: [{ 'notif': `You was Reject in tournament ${tournament.name} ,Sorry`,"time" : new Date().toLocaleString() }]
+                    {
+                        $push: {
+                            notification: {
+                                $each: [{ 'notif': `You was Reject in tournament ${tournament.name} ,Sorry`, "time": new Date().toLocaleString() }]
+                            }
                         }
-                    } },
+                    },
                     { new: true }
                 )
                 if (user.notification.length >= 5) {
@@ -227,7 +240,7 @@ class tournamenController {
         res.status(200).json({ success: true, data: randomUser })
     }
     static async match1(req, res, next) {
-        const { tournamentID } = req.params
+        const { matchID } = req.body
         const { user1, user2, score1, score2 } = req.body
         const tournament = await Tournament.findById(tournamentID)
         let firstUser = tournament.stage1.find(element => element.user == user1);

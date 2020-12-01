@@ -23,37 +23,47 @@ const tournamentSchema = new Schema({
     createAt: { type: String, default: (new Date()).toDateString() },
     stage1: [
         {
-            _id: false,
-            user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-            score: { type: String, default: null }
+            user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User',default : null },
+            score1: { type: String, default: null },
+            user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User',default : null },
+            score2: { type: String, default: null },
+            match : {type : String, default : null}
         }
     ],
     stage2: [
         {
-            _id: false,
-            user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-            score: { type: String, default: null }
+            user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User',default : null },
+            score1: { type: String, default: null },
+            user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User',default : null },
+            score2: { type: String, default: null },
+            match : {type : String, default : null}
         }
     ],
     stage3: [
         {
-            _id: false,
-            user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-            score: { type: String, default: null }
+            user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User',default : null },
+            score1: { type: String, default: null },
+            user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User',default : null },
+            score2: { type: String, default: null },
+            match : {type : String, default : null}
         }
     ],
     stage4: [
         {
-            _id: false,
-            user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-            score: { type: String, default: null }
+            user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User',default : null },
+            score1: { type: String, default: null },
+            user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User',default : null },
+            score2: { type: String, default: null },
+            match : {type : String, default : null}
         }
     ],
-    stage5: [
+    bronzeMatch: [
         {
-            _id: false,
-            user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-            score: { type: String, default: null }
+            user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User',default : null },
+            score1: { type: String, default: null },
+            user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User',default : null },
+            score2: { type: String, default: null },
+            match : {type : String, default : null}
         }
     ]
 })
