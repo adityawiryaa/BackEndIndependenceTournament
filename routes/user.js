@@ -1,11 +1,15 @@
 const express = require('express')
 const dataUser = express.Router()
 const userController = require('../controllers/userController')
-const userAuthentication = require('../middleware/userAuthentication')
+const authentication = require('../middleware/authentication')
 
 dataUser.post('/signup',userController.register)
 dataUser.post('/signin',userController.login)
-dataUser.get('/detail',userAuthentication,userController.detailUser)
-dataUser.put('/update',userAuthentication,userController.updateUser)
+dataUser.post('/create/headman',authentication.adminAuth,userController.createHeadMan)
+dataUser.post('/create/committe',authentication.headManAuth,userController.createCommitte)
+dataUser.put('/forget/password',userController.forgetPassword)
+dataUser.get('/detail',authentication.userAuth,userController.detailUser)
+dataUser.put('/update/password',authentication.userAuth,userController.updatePassword)
+dataUser.put('/update/data',authentication.userAuth,userController.updateUser)
 
 module.exports = dataUser

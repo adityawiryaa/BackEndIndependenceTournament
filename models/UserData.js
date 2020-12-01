@@ -10,35 +10,41 @@ const userSchema = new mongoose.Schema({
     password : {
         type : String,
         required : true,
-        minlength: 6,maxlength : 20
+        minlength: 6,
     },
     username : {
         type : String,
-        required : true
+        required : true,
+        minLength : 3
     },
     phone : {
-        type : Number,
-        minlength:10,
-        default : 0
+        type : String,
+        required : true,
+        unique : true,
+        validate : [/^(^\+62\s?|^0)(\d{3,4}-?){2}\d{3,4}$/, 'please fill valid phone']
     },
     role : {
         type : String,
         default : 'user'
-    }
+    },
+    createBy : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    age : {
+        type : Number,
+        required : true
+    },
+    fullname : {
+        type : String,
+        default : null
+    },
+    notification : [
+        {
+            _id : false,
+            notif : String,
+            time : String
+        }
+    ]
 
 })
 
-userSchema.pre('save', function (next) {
-    DataUser.findOne({ email: this.email})
-        .then(user => {
-            if (user) next({name: 'ALREADY_EXIST' })
-            else {
-                const salt = bcrypt.genSaltSync(10)
-                this.password = bcrypt.hashSync(this.password, salt)
-                next()
-            }
-        })
-        .catch(next)
-})
 const DataUser = mongoose.model('User',userSchema)
 module.exports = DataUser
