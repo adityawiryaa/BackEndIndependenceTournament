@@ -14,7 +14,8 @@ class authentication {
                     next()
                 }
             })
-        } else next({ name: 'MISSING_TOKEN' })
+        } 
+        else next({ name: 'MISSING_TOKEN' })
     }
 
     static headManAuth(req,res,next) {
@@ -28,7 +29,7 @@ class authentication {
                 }
                 else next({ name: 'NOT_ACCESS' })
             })
-        }
+        } else next({ name: 'MISSING_TOKEN' })
     }
     static committeAuth(req,res,next) {
         let token = req.headers['x-access-token'] || req.headers['authorization']
@@ -41,7 +42,8 @@ class authentication {
                 }
                 else next({ name: 'NOT_ACCESS' })
             })
-        }
+        } 
+        else next({ name: 'MISSING_TOKEN' })
     }
 
     static userAuth(req, res, next) {

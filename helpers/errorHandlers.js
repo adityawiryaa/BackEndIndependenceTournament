@@ -69,6 +69,14 @@ module.exports = (err,req,res,next) => {
         code = 500;
         message = 'Sorry Tournament full you can find other tournament'
         break;
+        case 'TOURNAMENT_FINISH' : 
+        code = 500;
+        message = 'Tournament Already Finish'
+        break
+        case 'MATCH_FAILED' :
+        code = 500;
+        message = 'Match Not Found'
+        break;
         case 'GAME_EXIST' : 
         code = 500;
         message = 'Game already exist'
@@ -83,7 +91,7 @@ module.exports = (err,req,res,next) => {
         break;
         case 'USER_WINNER':
         code = 500
-        message = 'User already winner on next stage'
+        message = 'User already winner on this stage'
         break;
         case  'ERROR' :
         code = 500;

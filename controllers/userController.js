@@ -53,7 +53,7 @@ module.exports = class userController {
             if (user) next({ name: 'ALREADY_EXIST' })
             else if (userPhone) next({ name: 'PHONE_EXIST' })
             else if (userUsername) next({ name: 'USERNAME_EXIST' })
-            else if(addressData.district){
+            if(addressData.district){
                 const userData = new User({ email, password, username, role : 'committe', phone, age,createBy : req.userID})
                 const salt = bcrypt.genSaltSync(10)
                 userData.password = bcrypt.hashSync(userData.password, salt)
@@ -62,9 +62,9 @@ module.exports = class userController {
                 await address.save()
                 res.status(201).json({ success: true, data: userData })
             }
-            else if(!addressData.district) next({name : 'ADDRESS_REQUIRED'})
+            else next({name : 'ADDRESS_REQUIRED'})
         }
-        catch { next({ name: 'REQUIRED' }) }
+        catch { next({name : 'ADDRESS_REQUIRED'}) }
     }
     static async login(req, res, next) {
         const { email, password, phone } = req.body
