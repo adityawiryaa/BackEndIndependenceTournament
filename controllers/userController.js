@@ -62,9 +62,9 @@ module.exports = class userController {
                 await address.save()
                 res.status(201).json({ success: true, data: userData })
             }
-            else next({name : 'ADDRESS_REQUIRED'})
+            else if(!addressData) next({name : 'ADDRESS_REQUIRED'})
         }
-        catch { next({name : 'ADDRESS_REQUIRED'}) }
+        catch { next({ name: 'REQUIRED' }) }
     }
     static async login(req, res, next) {
         const { email, password, phone } = req.body
