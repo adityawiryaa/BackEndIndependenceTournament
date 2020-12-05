@@ -53,7 +53,7 @@ module.exports = class userController {
             if (user) next({ name: 'ALREADY_EXIST' })
             else if (userPhone) next({ name: 'PHONE_EXIST' })
             else if (userUsername) next({ name: 'USERNAME_EXIST' })
-            if(addressData.district){
+            if(addressData){
                 const userData = new User({ email, password, username, role : 'committe', phone, age,createBy : req.userID})
                 const salt = bcrypt.genSaltSync(10)
                 userData.password = bcrypt.hashSync(userData.password, salt)
@@ -67,19 +67,14 @@ module.exports = class userController {
         catch { next({ name: 'REQUIRED' }) }
     }
     static async login(req, res, next) {
-        const { email, password, phone } = req.body
-        const user = await User.findOne({ email })
-        const userPhone = await User.findOne({ phone: phone })
+        const { password } = req.body
+        const user = await User.findOne({ $or : [{email : req.body.identity}, {phone : req.body.identity}] })
         try {
             if (user && bcrypt.compareSync(password, user.password)) {
                 const token = jwt.sign({ _id: user._id, role: user.role }, 'GROUP_2', { expiresIn: '24h' })
                 res.status(200).send({ success: true, data: user, token })
             }
-            else if (userPhone && bcrypt.compareSync(password, userPhone.password)) {
-                const token = jwt.sign({ _id: userPhone._id, role: userPhone.role }, 'GROUP_2', { expiresIn: '24h' })
-                res.status(200).send({ success: true, data: userPhone, token })
-            }
-            else if (!user || !userPhone) next({ name: 'INCORRECT_LOGIN' })
+            else if (!user) next({ name: 'INCORRECT_LOGIN' })
             else next({ name: 'USER_NOT_FOUND' })
         }
         catch { next({ name: 'REQUIRED' }) }
@@ -129,5 +124,12 @@ module.exports = class userController {
                 res.status(200).json({success : true, data : update})
         }
         catch { next({ name: 'USER_NOT_FOUND' }) }
+    }
+    static async listCommitte(req,res,next){
+        try {
+            const committe = await User.find({createBy: req.userID})
+            res.status(200).json({success : true, data : committe})
+        }
+        catch {next({ name: 'USER_NOT_FOUND' })}
     }
 }

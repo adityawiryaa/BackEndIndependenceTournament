@@ -2,20 +2,23 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const tournamentSchema = new Schema({
-    name: { type: String, required: true },
+    name: { type: String, required: "Name Tournament Required" },
     participant: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
     ],
+    userNow : [
+        { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    ],
     createBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    maxuser: { type: Number, required: true },
-    type: { type: String, required: true },
+    maxuser: { type: Number, required: "Max User Required" },
+    type: { type: String, required: "Type Tournament Required" },
     prize: {
-        first: { type: String, required: true },
-        second: { type: String, required: true },
-        third: { type: String, required: true }
+        first: { type: String, required: "Prize First Required" },
+        second: { type: String, required: "Prize Second Required" },
+        third: { type: String, required: "Prize Third Required" }
     },
     age: { type: Number, default: 'all' },
-    game: { type: mongoose.Schema.Types.ObjectId, ref: 'Game', required: true },
+    game: { type: mongoose.Schema.Types.ObjectId, ref: 'Game', required: "Game Required" },
     start: { type: String, default: 'Date Not specified' },
     end: { type: String, default: 'Date Not specified' },
     rules: [],
@@ -77,6 +80,7 @@ const tournamentSchema = new Schema({
     ],
     winner: [
         {
+            _id : false,
             first : { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
             second : { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
             third : { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },

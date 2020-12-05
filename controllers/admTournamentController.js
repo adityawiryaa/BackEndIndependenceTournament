@@ -4,7 +4,6 @@ const User = require('../models/UserData')
 class tournamenController {
     static async createTournament(req, res, next) {
         try {
-
             const dataTournament = await Tournament.findOne({ name: req.body.name })
             if (dataTournament) next({ name: 'TOURNAMENT_EXIST' })
             else {
@@ -35,10 +34,13 @@ class tournamenController {
                             },
                             bronzeMatch: {
                                 $each: [{ 'match': null }]
+                            },
+                            winner: {
+                                $each: [{}]
                             }
                         }
                     }, { new: true })
-                    res.status(200).json({ success: true, data: generateBracket })
+                    res.status(201).json({ success: true, data: generateBracket })
                 }
                 else if (tournament.maxuser == 8 && tournament.type == 'single elimination') {
                     const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name }, {
@@ -54,10 +56,13 @@ class tournamenController {
                             },
                             bronzeMatch: {
                                 $each: [{ 'match': null }]
+                            },
+                            winner: {
+                                $each: [{}]
                             }
                         }
                     }, { new: true })
-                    res.status(200).json({ success: true, data: generateBracket })
+                    res.status(201).json({ success: true, data: generateBracket })
                 }
                 else if (tournament.maxuser == 16 && tournament.type == 'single elimination') {
                     const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name }, {
@@ -76,10 +81,13 @@ class tournamenController {
                             },
                             bronzeMatch: {
                                 $each: [{ 'match': null }]
+                            },
+                            winner: {
+                                $each: [{}]
                             }
                         }
                     }, { new: true })
-                    res.status(200).json({ success: true, data: generateBracket })
+                    res.status(201).json({ success: true, data: generateBracket })
                 }
             }
         }
@@ -88,7 +96,7 @@ class tournamenController {
     static async listTournament(req, res, next) {
         try {
             const tournament = await Tournament.find()
-            .populate('game')
+                .populate('game')
             res.status(200).json({ success: true, data: tournament })
         }
         catch { next({ name: 'TOURNAMENT_FAILED' }) }
@@ -97,7 +105,7 @@ class tournamenController {
         const { tournamentID } = req.params
         try {
             const tournament = await Tournament.findById(tournamentID)
-            .populate('game')
+                .populate('game')
             res.status(200).json({ success: true, data: tournament })
         }
         catch { next({ name: 'TOURNAMENT_FAILED' }) }
@@ -128,7 +136,7 @@ class tournamenController {
         const { tournamentID } = req.params
         const user = await User.findById(req.userID)
         const tournament = await Tournament.findById(tournamentID)
-        const userTournamentExist = await Tournament.findOne({ participant: req.userID })
+        const userTournamentExist = await Tournament.findOne({ userNow: req.userID })
         const userTournamentWaiting = await Tournament.findOne({ waitinglist: req.userID })
         const totalWaiting = tournament.participant.length + tournament.waitinglist.length
         try {
@@ -172,7 +180,7 @@ class tournamenController {
 
                     }
                     const dataTournament = await Tournament.findByIdAndUpdate(tournamentID,
-                        { $pull: { waitinglist: req.body.user }, $push: { participant: req.body.user } },
+                        { $pull: { waitinglist: req.body.user }, $addToSet: { participant: req.body.user, userNow: req.body.user } },
                         { new: true }
                     )
                     await User.findOneAndUpdate({ _id: req.body.user },
@@ -279,6 +287,8 @@ class tournamenController {
         const stage2User2 = tournament.stage2.find(element => element.user1 == user2 || element.user2 == user1);
         const stage2Null = await tournament.stage2.find(element => element.user1 == null || element.user2 == null)
         const bronze = await tournament.bronzeMatch.find(element => element)
+        try {
+            
         if (tournament.createBy == req.userID) {
             if (!stage2User1 && !stage2User2) {
                 const updateSore = await Tournament.findOneAndUpdate({ 'stage1._id': matchID, _id: tournamentID },
@@ -340,6 +350,8 @@ class tournamenController {
             else next({ name: 'USER_WINNER' })
         }
         else next({ name: 'NOT_ACCESS' })
+        }
+        catch {next({ name: 'MATCH_FAILED' })}
     }
     static async match2(req, res, next) {
         const { user1, user2, score1, score2, matchID } = req.body
@@ -351,7 +363,9 @@ class tournamenController {
         const bronze = await tournament.bronzeMatch.find(element => element)
         const champion = await tournament.winner.find(element => element)
 
-        if (champion == undefined) {
+        try {
+            
+        if (champion == undefined || champion.first == null && champion.second == null) {
             if (tournament.createBy == req.userID) {
                 if (!stage2User1 && !stage2User2) {
                     const updateSore = await Tournament.findOneAndUpdate({ 'stage2._id': matchID, _id: tournamentID },
@@ -361,8 +375,8 @@ class tournamenController {
                     if (match.score1 > match.score2 && match.user1 == user1 && match.user2 == user2) {
                         if (tournament.stage2.length == 1) {
                             await Tournament.findByIdAndUpdate(tournamentID, { $addToSet: { status: 'Complete' } }, { new: true })
-                            const final = await Tournament.findOneAndUpdate({ _id: tournamentID },
-                                { $set: { winner: { 'first': user1, 'second': user2 }, } }
+                            const final = await Tournament.findOneAndUpdate({ 'winner.first': null, 'winner.second': null },
+                                { $set: { "winner.$.first": user1, "winner.$.second": user2, userNow: [] } }
                                 , { new: true })
                             res.status(200).json({ success: true, data: final })
                         }
@@ -396,8 +410,8 @@ class tournamenController {
                     else if (match.score1 < match.score2 && match.user1 == user1 && match.user2 == user2) {
                         if (tournament.stage2.length == 1) {
                             await Tournament.findByIdAndUpdate(tournamentID, { $addToSet: { status: 'Complete' } }, { new: true })
-                            const final = await Tournament.findOneAndUpdate({ _id: tournamentID },
-                                { $set: { winner: { 'first': user2, 'second': user1 }, } }
+                            const final = await Tournament.findOneAndUpdate({ 'winner.first': null, 'winner.second': null },
+                                { $set: { "winner.$.first": user2, "winner.$.second": user1, userNow: [] } }
                                 , { new: true })
                             res.status(200).json({ success: true, data: final })
                         }
@@ -434,6 +448,8 @@ class tournamenController {
             else next({ name: 'NOT_ACCESS' })
         }
         else next({ name: 'TOURNAMENT_FINISH' })
+        }
+        catch {next({ name: 'MATCH_FAILED' })}
 
     }
     static async match3(req, res, next) {
@@ -446,7 +462,9 @@ class tournamenController {
         const bronze = await tournament.bronzeMatch.find(element => element)
         const champion = tournament.winner.find(element => element);
 
-        if (champion == undefined) {
+        try {
+           
+        if (champion == undefined || champion.first == null && champion.second == null) {
             if (tournament.createBy == req.userID) {
                 if (!stage4User1 && !stage4User2) {
                     const updateSore = await Tournament.findOneAndUpdate({ 'stage3._id': matchID, _id: tournamentID },
@@ -456,8 +474,8 @@ class tournamenController {
                     if (match.score1 > match.score2 && match.user1 == user1 && match.user2 == user2) {
                         if (tournament.stage3.length == 1) {
                             await Tournament.findByIdAndUpdate(tournamentID, { $addToSet: { status: 'Complete' } }, { new: true })
-                            const final = await Tournament.findOneAndUpdate({ _id: tournamentID },
-                                { $set: { winner: { 'first': user1, 'second': user2 }, } }
+                            const final = await Tournament.findOneAndUpdate({ 'winner.first': null, 'winner.second': null },
+                                { $set: { "winner.$.first": user1, "winner.$.second": user2, userNow: [] }, }
                                 , { new: true })
                             res.status(200).json({ success: true, data: final })
                         }
@@ -491,8 +509,8 @@ class tournamenController {
                     else if (match.score1 < match.score2 && match.user1 == user1 && match.user2 == user2) {
                         if (tournament.stage3.length == 1) {
                             await Tournament.findByIdAndUpdate(tournamentID, { $addToSet: { status: 'Complete' } }, { new: true })
-                            const final = await Tournament.findOneAndUpdate({ _id: tournamentID },
-                                { $set: { winner: { 'first': user2, 'second': user1 }, } }
+                            const final = await Tournament.findOneAndUpdate({ 'winner.first': null, 'winner.second': null },
+                                { $set: { "winner.$.first": user2, "winner.$.second": user1,userNow : [] }, }
                                 , { new: true })
                             res.status(200).json({ success: true, data: final })
                         }
@@ -528,7 +546,9 @@ class tournamenController {
             }
             else next({ name: 'NOT_ACCESS' })
         }
-        else next({ name: 'TOURNAMENT_FINISH' })
+        else next({ name: 'TOURNAMENT_FINISH' }) 
+        }
+        catch {next({ name: 'MATCH_FAILED' })}
 
     }
     static async match4(req, res, next) {
@@ -541,6 +561,8 @@ class tournamenController {
         const bronze = await tournament.bronzeMatch.find(element => element)
         const champion = tournament.winner.find(element => element);
 
+        try {
+            
         if (champion == undefined || champion.first == null && champion.second == null) {
             if (tournament.createBy == req.userID) {
                 if (!stage5User1 && !stage5User2) {
@@ -551,8 +573,8 @@ class tournamenController {
                     if (match.score1 > match.score2 && match.user1 == user1 && match.user2 == user2) {
                         if (tournament.stage3.length == 1) {
                             await Tournament.findByIdAndUpdate(tournamentID, { $addToSet: { status: 'Complete' } }, { new: true })
-                            const final = await Tournament.findOneAndUpdate({ _id: tournamentID },
-                                { $set: { winner: { 'first': user1, 'second': user2 }, } }
+                            const final = await Tournament.findOneAndUpdate({ 'winner.first': null, 'winner.second': null },
+                                { $set: { "winner.$.first": user1, "winner.$.second": user2,userNow : [] }, }
                                 , { new: true })
                             res.status(200).json({ success: true, data: final })
                         }
@@ -586,8 +608,8 @@ class tournamenController {
                     else if (match.score1 < match.score2 && match.user1 == user1 && match.user2 == user2) {
                         if (tournament.stage4.length == 1) {
                             await Tournament.findByIdAndUpdate(tournamentID, { $addToSet: { status: 'Complete' } }, { new: true })
-                            const final = await Tournament.findOneAndUpdate({ _id: tournamentID },
-                                { $set: { winner: { 'first': user2, 'second': user1 }, } }
+                            const final = await Tournament.findOneAndUpdate({ 'winner.first': null, 'winner.second': null },
+                                { $set: { "winner.$.first": user2, "winner.$.second": user1,userNow : [] }, }
                                 , { new: true })
                             res.status(200).json({ success: true, data: final })
                         }
@@ -624,6 +646,8 @@ class tournamenController {
             else next({ name: 'NOT_ACCESS' })
         }
         else next({ name: 'TOURNAMENT_FINISH' })
+        }
+        catch {next({ name: 'MATCH_FAILED' })}
 
     }
     static async bronzeMatch(req, res, next) {
@@ -632,6 +656,8 @@ class tournamenController {
         const tournament = await Tournament.findById(tournamentID)
         const champion = tournament.winner.find(element => element);
         const match = tournament.bronzeMatch.find(element => element._id == matchID)
+        try { 
+            
         if (match) {
             if (champion == undefined || champion.third == null) {
                 if (tournament.createBy == req.userID) {
@@ -641,14 +667,14 @@ class tournamenController {
                             { new: true })
                         const winner = updateSore.bronzeMatch.find(element => element._id == matchID)
                         if (winner.score1 > winner.score2) {
-                            const final = await Tournament.findOneAndUpdate({ 'winner.third' : null },
-                                { $set: { "winner.$.third" : user1} }
+                            const final = await Tournament.findOneAndUpdate({ 'winner.third': null },
+                                { $set: { "winner.$.third": user1 } }
                                 , { new: true })
                             res.status(200).json({ success: true, data: final })
                         }
                         else if (winner.score1 < winner.score2) {
-                            const final = await Tournament.findOneAndUpdate({ 'winner.third' : null },
-                                { $set: {  "winner.$.third" : user2 },  }
+                            const final = await Tournament.findOneAndUpdate({ 'winner.third': null },
+                                { $set: { "winner.$.third": user2 }, }
                                 , { new: true })
                             res.status(200).json({ success: true, data: final })
                         }
@@ -660,8 +686,24 @@ class tournamenController {
             }
             else next({ name: 'TOURNAMENT_FINISH' })
         }
-        else  next({ name: 'MATCH_FAILED' })
+        else next({ name: 'MATCH_FAILED' })
+        }
+        catch {next({ name: 'MATCH_FAILED' })}
 
+    }
+    static async tournamentByCommitte(req,res,next) {
+        try {
+            const tournament = await Tournament.find({createBy : req.userID})
+            res.status(200).json({success : true, data : tournament})
+        }
+        catch {next({name : "TOURNAMENT_FAILED"})}
+    }
+    static async myTournament(req,res,next) {
+        try  {
+            const tournament = await Tournament.find({participant : req.userID})
+            res,status(200).json({success : true , data : tournament})
+        }
+        catch {next({name : "TOURNAMENT_FAILED"})}
     }
 }
 

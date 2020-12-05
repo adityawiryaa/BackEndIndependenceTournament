@@ -4,23 +4,24 @@ const bcrypt = require('bcrypt')
 const userSchema = new mongoose.Schema({
     email : { 
         type : String,
-        required : true,
-        unique : true,match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
+        required : 'email required',
+        unique : true,
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
     },
     password : {
         type : String,
-        required : true,
-        minlength: 6,
+        required : 'Password Required',
+        minlength: [6, 'Password must be atLeast 6 character long'],
     },
     username : {
         type : String,
-        required : true,
-        minLength : 3
+        required : "Username required",
+        minLength : [3, 'Username must be atLeast 3 character long']
     },
     phone : {
         type : String,
-        required : true,
-        unique : true,
+        unique :  true,
+        required : "phone number required",
         validate : [/^(^\+62\s?|^0)(\d{3,4}-?){2}\d{3,4}$/, 'please fill valid phone']
     },
     role : {
@@ -30,7 +31,7 @@ const userSchema = new mongoose.Schema({
     createBy : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     age : {
         type : Number,
-        required : true
+        required : "age required"
     },
     fullname : {
         type : String,
