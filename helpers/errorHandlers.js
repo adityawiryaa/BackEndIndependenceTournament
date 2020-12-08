@@ -43,7 +43,7 @@ module.exports = (err,req,res,next) => {
         break;
         case 'USER_NOT_FOUND':
         code = 404;
-        message = 'User Not Found!!'
+        message = 'User Not Found!! You can SignUp'
         break;
         case 'NOT_ACCESS':
         code = 500;

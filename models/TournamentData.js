@@ -106,13 +106,18 @@ const tournamentSchema = new Schema({
         score1: { type: String, default: null },
         user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
         score2: { type: String, default: null },
+        user3: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
+        score3: { type: String, default: null },
+        user4: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
+        score4: { type: String, default: null },
+        match: { type: String, default: null }
     }],
-    ffaStage3: [{
-        user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
-        score1: { type: String, default: null },
-        user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
-        score2: { type: String, default: null },
-    }],
+    // ffaStage3: [{
+    //     user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
+    //     score1: { type: String, default: null },
+    //     user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
+    //     score2: { type: String, default: null },
+    // }],
     status: []
 })
 

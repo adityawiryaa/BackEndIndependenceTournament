@@ -11,7 +11,7 @@ dataTournament.delete('/delete/:tournamentID',authentication.committeAuth,admTou
 dataTournament.post('/register/:tournamentID',authentication.userAuth,admTournamentController.registerTournament)
 dataTournament.put('/register/accept/:tournamentID',authentication.committeAuth,admTournamentController.acceptUser)
 dataTournament.put('/register/reject/:tournamentID',authentication.committeAuth,admTournamentController.rejectUser)
-dataTournament.post('/start/:tournamentID',authentication.committeAuth,admTournamentController.startTournament)
+dataTournament.get('/start/:tournamentID',authentication.committeAuth,admTournamentController.startTournament)
 dataTournament.post('/match/detail/:tournamentID',admTournamentController.detailMatch)
 dataTournament.put('/match1/:tournamentID',authentication.committeAuth,admTournamentController.match1)
 dataTournament.put('/match2/:tournamentID',authentication.committeAuth,admTournamentController.match2)
