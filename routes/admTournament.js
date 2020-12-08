@@ -12,7 +12,7 @@ dataTournament.post('/register/:tournamentID',authentication.userAuth,admTournam
 dataTournament.put('/register/accept/:tournamentID',authentication.committeAuth,admTournamentController.acceptUser)
 dataTournament.put('/register/reject/:tournamentID',authentication.committeAuth,admTournamentController.rejectUser)
 dataTournament.post('/start/:tournamentID',authentication.committeAuth,admTournamentController.startTournament)
-dataTournament.get('/match/detail/:tournamentID',admTournamentController.detailMatch)
+dataTournament.post('/match/detail/:tournamentID',admTournamentController.detailMatch)
 dataTournament.put('/match1/:tournamentID',authentication.committeAuth,admTournamentController.match1)
 dataTournament.put('/match2/:tournamentID',authentication.committeAuth,admTournamentController.match2)
 dataTournament.put('/match3/:tournamentID',authentication.committeAuth,admTournamentController.match3)

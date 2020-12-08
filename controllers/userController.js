@@ -69,6 +69,8 @@ module.exports = class userController {
     static async login(req, res, next) {
         const { password } = req.body
         const user = await User.findOne({ $or : [{email : req.body.identity}, {phone : req.body.identity}] })
+        console.log(user)
+        console.log(password)
         try {
             if (user && bcrypt.compareSync(password, user.password)) {
                 const token = jwt.sign({ _id: user._id, role: user.role }, 'GROUP_2', { expiresIn: '24h' })
