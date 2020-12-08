@@ -372,7 +372,6 @@ class tournamenController {
         const stage2Null = await tournament.stage2.find(element => element.user1 == null || element.user2 == null)
         const bronze = await tournament.bronzeMatch.find(element => element)
         try {
-
             if (tournament.createBy == req.userID) {
                 if (!stage2User1 && !stage2User2) {
                     const updateSore = await Tournament.findOneAndUpdate({ 'stage1._id': matchID, _id: tournamentID },
@@ -382,23 +381,23 @@ class tournamenController {
                     if (match.score1 > match.score2 && match.user1._id == user1 && match.user2._id == user2) {
                         if (tournament.stage1.length == 2) {
                             if (bronze.user1 == null) {
-                                await Tournament.findOneAndUpdate({ 'bronzeMatch.user1': null },
+                                await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user1': null },
                                     { $set: { 'bronzeMatch.$.user1': user2 } },
                                     { new: true })
                             }
                             else if (bronze.user2 == null) {
-                                await Tournament.findOneAndUpdate({ 'bronzeMatch.user2': null },
+                                await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user2': null },
                                     { $set: { 'bronzeMatch.$.user2': user2 } },
                                     { new: true })
                             }
                         }
                         if (stage2Null.user1 == null) {
-                            const result = await Tournament.findOneAndUpdate({ 'stage2.user1': null },
+                            const result = await Tournament.findOneAndUpdate({_id : tournamentID ,'stage2.user1': null },
                                 { $set: { 'stage2.$.user1': user1 } }, { new: true })
                             res.status(200).json({ success: true, data: result })
                         }
                         else if (stage2Null.user2 == null) {
-                            const result = await Tournament.findOneAndUpdate({ 'stage2.user2': null },
+                            const result = await Tournament.findOneAndUpdate({_id : tournamentID ,'stage2.user2': null },
                                 { $set: { 'stage2.$.user2': user1 } }, { new: true })
                             res.status(200).json({ success: true, data: result })
                         }
@@ -407,23 +406,23 @@ class tournamenController {
                     else if (match.score1 < match.score2 && match.user1._id == user1 && match.user2._id == user2) {
                         if (tournament.stage1.length == 2) {
                             if (bronze.user1 == null) {
-                                await Tournament.findOneAndUpdate({ 'bronzeMatch.user1': null },
+                                await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user1': null },
                                     { $set: { 'bronzeMatch.$.user1': user1 } },
                                     { new: true })
                             }
                             else if (bronze.user2 == null) {
-                                await Tournament.findOneAndUpdate({ 'bronzeMatch.user2': null },
+                                await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user2': null },
                                     { $set: { 'bronzeMatch.$.user2': user1 } }
                                     , { new: true })
                             }
                         }
                         if (stage2Null.user1 == null) {
-                            const result = await Tournament.findOneAndUpdate({ 'stage2.user1': null },
+                            const result = await Tournament.findOneAndUpdate({_id : tournamentID, 'stage2.user1': null },
                                 { $set: { 'stage2.$.user1': user2 } }, { new: true })
                             res.status(200).json({ success: true, data: result })
                         }
                         else if (stage2Null.user2 == null) {
-                            const result = await Tournament.findOneAndUpdate({ 'stage2.user2': null },
+                            const result = await Tournament.findOneAndUpdate({_id : tournamentID, 'stage2.user2': null },
                                 { $set: { 'stage2.$.user2': user2 } }, { new: true })
                             res.status(200).json({ success: true, data: result })
                         }
@@ -451,14 +450,14 @@ class tournamenController {
             if (champion == undefined || champion.first == null && champion.second == null) {
                 if (tournament.createBy == req.userID) {
                     if (!stage3User1 && !stage3User2) {
-                        const updateSore = await Tournament.findOneAndUpdate({ 'stage2._id': matchID, _id: tournamentID },
+                        const updateSore = await Tournament.findOneAndUpdate({_id : tournamentID, 'stage2._id': matchID, _id: tournamentID },
                             { $set: { 'stage2.$.score1': score1, 'stage2.$.score2': score2 } },
                             { new: true })
                         const match = await updateSore.stage2.find(element => element._id == matchID)
                         if (match.score1 > match.score2 && match.user1._id == user1 && match.user2._id == user2) {
                             if (tournament.stage2.length == 1) {
                                 await Tournament.findByIdAndUpdate(tournamentID, { $addToSet: { status: 'Complete' } }, { new: true })
-                                const final = await Tournament.findOneAndUpdate({ 'winner.first': null, 'winner.second': null },
+                                const final = await Tournament.findOneAndUpdate({_id : tournamentID, 'winner.first': null, 'winner.second': null },
                                     { $set: { "winner.$.first": user1, "winner.$.second": user2, userNow: [] } }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
@@ -466,23 +465,23 @@ class tournamenController {
                             else {
                                 if (tournament.stage2.length == 2) {
                                     if (bronze.user1 == null) {
-                                        await Tournament.findOneAndUpdate({ 'bronzeMatch.user1': null },
+                                        await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user1': null },
                                             { $set: { 'bronzeMatch.$.user1': user2 } },
                                             { new: true })
                                     }
                                     else if (bronze.user2 == null) {
-                                        await Tournament.findOneAndUpdate({ 'bronzeMatch.user2': null },
+                                        await Tournament.findOneAndUpdate({ _id : tournamentID,'bronzeMatch.user2': null },
                                             { $set: { 'bronzeMatch.$.user2': user2 } },
                                             { new: true })
                                     }
                                 }
                                 if (stage3Null.user1 == null) {
-                                    const result = await Tournament.findOneAndUpdate({ 'stage3.user1': null },
+                                    const result = await Tournament.findOneAndUpdate({ _id : tournamentID,'stage3.user1': null },
                                         { $set: { 'stage3.$.user1': user1 } }, { new: true })
                                     res.status(200).json({ success: true, data: result })
                                 }
                                 else if (stage3Null.user2 == null) {
-                                    const result = await Tournament.findOneAndUpdate({ 'stage3.user2': null },
+                                    const result = await Tournament.findOneAndUpdate({ _id : tournamentID,'stage3.user2': null },
                                         { $set: { 'stage3.$.user2': user1 } }, { new: true })
                                     res.status(200).json({ success: true, data: result })
                                 }
@@ -493,7 +492,7 @@ class tournamenController {
                         else if (match.score1 < match.score2 && match.user1._id == user1 && match.user2._id == user2) {
                             if (tournament.stage2.length == 1) {
                                 await Tournament.findByIdAndUpdate(tournamentID, { $addToSet: { status: 'Complete' } }, { new: true })
-                                const final = await Tournament.findOneAndUpdate({ 'winner.first': null, 'winner.second': null },
+                                const final = await Tournament.findOneAndUpdate({_id : tournamentID, 'winner.first': null, 'winner.second': null },
                                     { $set: { "winner.$.first": user2, "winner.$.second": user1, userNow: [] } }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
@@ -501,23 +500,23 @@ class tournamenController {
                             else {
                                 if (tournament.stage2.length == 2) {
                                     if (bronze.user1 == null) {
-                                        await Tournament.findOneAndUpdate({ 'bronzeMatch.user1': null },
+                                        await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user1': null },
                                             { $set: { 'bronzeMatch.$.user1': user1 } },
                                             { new: true })
                                     }
                                     else if (bronze.user2 == null) {
-                                        await Tournament.findOneAndUpdate({ 'bronzeMatch.user2': null },
+                                        await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user2': null },
                                             { $set: { 'bronzeMatch.$.user2': user1 } }
                                             , { new: true })
                                     }
                                 }
                                 if (stage3Null.user1 == null) {
-                                    const result = await Tournament.findOneAndUpdate({ 'stage3.user1': null },
+                                    const result = await Tournament.findOneAndUpdate({_id : tournamentID, 'stage3.user1': null },
                                         { $set: { 'stage3.$.user1': user2 } }, { new: true })
                                     res.status(200).json({ success: true, data: result })
                                 }
                                 else if (stage3Null.user2 == null) {
-                                    const result = await Tournament.findOneAndUpdate({ 'stage3.user2': null },
+                                    const result = await Tournament.findOneAndUpdate({ _id : tournamentID,'stage3.user2': null },
                                         { $set: { 'stage3.$.user2': user2 } }, { new: true })
                                     res.status(200).json({ success: true, data: result })
                                 }
@@ -557,7 +556,7 @@ class tournamenController {
                         if (match.score1 > match.score2 && match.user1._id == user1 && match.user2._id == user2) {
                             if (tournament.stage3.length == 1) {
                                 await Tournament.findByIdAndUpdate(tournamentID, { $addToSet: { status: 'Complete' } }, { new: true })
-                                const final = await Tournament.findOneAndUpdate({ 'winner.first': null, 'winner.second': null },
+                                const final = await Tournament.findOneAndUpdate({_id : tournamentID, 'winner.first': null, 'winner.second': null },
                                     { $set: { "winner.$.first": user1, "winner.$.second": user2, userNow: [] }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
@@ -565,23 +564,23 @@ class tournamenController {
                             else {
                                 if (tournament.stage3.length == 2) {
                                     if (bronze.user1 == null) {
-                                        await Tournament.findOneAndUpdate({ 'bronzeMatch.user1': null },
+                                        await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user1': null },
                                             { $set: { 'bronzeMatch.$.user1': user2 } },
                                             { new: true })
                                     }
                                     else if (bronze.user2 == null) {
-                                        await Tournament.findOneAndUpdate({ 'bronzeMatch.user2': null },
+                                        await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user2': null },
                                             { $set: { 'bronzeMatch.$.user2': user2 } },
                                             { new: true })
                                     }
                                 }
                                 if (stage4Null.user1 == null) {
-                                    const result = await Tournament.findOneAndUpdate({ 'stage4.user1': null },
+                                    const result = await Tournament.findOneAndUpdate({_id : tournamentID, 'stage4.user1': null },
                                         { $set: { 'stage4.$.user1': user1 } }, { new: true })
                                     res.status(200).json({ success: true, data: result })
                                 }
                                 else if (stage4Null.user2 == null) {
-                                    const result = await Tournament.findOneAndUpdate({ 'stage4.user2': null },
+                                    const result = await Tournament.findOneAndUpdate({_id : tournamentID, 'stage4.user2': null },
                                         { $set: { 'stage4.$.user2': user1 } }, { new: true })
                                     res.status(200).json({ success: true, data: result })
                                 }
@@ -592,7 +591,7 @@ class tournamenController {
                         else if (match.score1 < match.score2 && match.user1._id == user1 && match.user2._id == user2) {
                             if (tournament.stage3.length == 1) {
                                 await Tournament.findByIdAndUpdate(tournamentID, { $addToSet: { status: 'Complete' } }, { new: true })
-                                const final = await Tournament.findOneAndUpdate({ 'winner.first': null, 'winner.second': null },
+                                const final = await Tournament.findOneAndUpdate({_id : tournamentID, 'winner.first': null, 'winner.second': null },
                                     { $set: { "winner.$.first": user2, "winner.$.second": user1, userNow: [] }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
@@ -600,23 +599,23 @@ class tournamenController {
                             else {
                                 if (tournament.stage3.length == 2) {
                                     if (bronze.user1 == null) {
-                                        await Tournament.findOneAndUpdate({ 'bronzeMatch.user1': null },
+                                        await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user1': null },
                                             { $set: { 'bronzeMatch.$.user1': user1 } },
                                             { new: true })
                                     }
                                     else if (bronze.user2 == null) {
-                                        await Tournament.findOneAndUpdate({ 'bronzeMatch.user2': null },
+                                        await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user2': null },
                                             { $set: { 'bronzeMatch.$.user2': user1 } }
                                             , { new: true })
                                     }
                                 }
                                 if (stage4Null.user1 == null) {
-                                    const result = await Tournament.findOneAndUpdate({ 'stage4.user1': null },
+                                    const result = await Tournament.findOneAndUpdate({_id : tournamentID, 'stage4.user1': null },
                                         { $set: { 'stage4.$.user1': user2 } }, { new: true })
                                     res.status(200).json({ success: true, data: result })
                                 }
                                 else if (stage4Null.user2 == null) {
-                                    const result = await Tournament.findOneAndUpdate({ 'stage4.user2': null },
+                                    const result = await Tournament.findOneAndUpdate({_id : tournamentID, 'stage4.user2': null },
                                         { $set: { 'stage4.$.user2': user2 } }, { new: true })
                                     res.status(200).json({ success: true, data: result })
                                 }
@@ -656,7 +655,7 @@ class tournamenController {
                         if (match.score1 > match.score2 && match.user1._id == user1 && match.user2._id == user2) {
                             if (tournament.stage4.length == 1) {
                                 await Tournament.findByIdAndUpdate(tournamentID, { $addToSet: { status: 'Complete' } }, { new: true })
-                                const final = await Tournament.findOneAndUpdate({ 'winner.first': null, 'winner.second': null },
+                                const final = await Tournament.findOneAndUpdate({_id : tournamentID, 'winner.first': null, 'winner.second': null },
                                     { $set: { "winner.$.first": user1, "winner.$.second": user2, userNow: [] }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
@@ -664,23 +663,23 @@ class tournamenController {
                             else {
                                 if (tournament.stage4.length == 2) {
                                     if (bronze.user1 == null) {
-                                        await Tournament.findOneAndUpdate({ 'bronzeMatch.user1': null },
+                                        await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user1': null },
                                             { $set: { 'bronzeMatch.$.user1': user2 } },
                                             { new: true })
                                     }
                                     else if (bronze.user2 == null) {
-                                        await Tournament.findOneAndUpdate({ 'bronzeMatch.user2': null },
+                                        await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user2': null },
                                             { $set: { 'bronzeMatch.$.user2': user2 } },
                                             { new: true })
                                     }
                                 }
                                 if (stage5Null.user1 == null) {
-                                    const result = await Tournament.findOneAndUpdate({ 'stage5.user1': null },
+                                    const result = await Tournament.findOneAndUpdate({_id : tournamentID, 'stage5.user1': null },
                                         { $set: { 'stage5.$.user1': user1 } }, { new: true })
                                     res.status(200).json({ success: true, data: result })
                                 }
                                 else if (stage5Null.user2 == null) {
-                                    const result = await Tournament.findOneAndUpdate({ 'stage5.user2': null },
+                                    const result = await Tournament.findOneAndUpdate({_id : tournamentID, 'stage5.user2': null },
                                         { $set: { 'stage5.$.user2': user1 } }, { new: true })
                                     res.status(200).json({ success: true, data: result })
                                 }
@@ -691,7 +690,7 @@ class tournamenController {
                         else if (match.score1 < match.score2 && match.user1._id == user1 && match.user2._id == user2) {
                             if (tournament.stage4.length == 1) {
                                 await Tournament.findByIdAndUpdate(tournamentID, { $addToSet: { status: 'Complete' } }, { new: true })
-                                const final = await Tournament.findOneAndUpdate({ 'winner.first': null, 'winner.second': null },
+                                const final = await Tournament.findOneAndUpdate({_id : tournamentID, 'winner.first': null, 'winner.second': null },
                                     { $set: { "winner.$.first": user2, "winner.$.second": user1, userNow: [] }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
@@ -699,23 +698,23 @@ class tournamenController {
                             else {
                                 if (tournament.stage4.length == 2) {
                                     if (bronze.user1 == null) {
-                                        await Tournament.findOneAndUpdate({ 'bronzeMatch.user1': null },
+                                        await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user1': null },
                                             { $set: { 'bronzeMatch.$.user1': user1 } },
                                             { new: true })
                                     }
                                     else if (bronze.user2 == null) {
-                                        await Tournament.findOneAndUpdate({ 'bronzeMatch.user2': null },
+                                        await Tournament.findOneAndUpdate({_id : tournamentID, 'bronzeMatch.user2': null },
                                             { $set: { 'bronzeMatch.$.user2': user1 } }
                                             , { new: true })
                                     }
                                 }
                                 if (stage5Null.user1 == null) {
-                                    const result = await Tournament.findOneAndUpdate({ 'stage5.user1': null },
+                                    const result = await Tournament.findOneAndUpdate({ _id : tournamentID,'stage5.user1': null },
                                         { $set: { 'stage5.$.user1': user2 } }, { new: true })
                                     res.status(200).json({ success: true, data: result })
                                 }
                                 else if (stage5Null.user2 == null) {
-                                    const result = await Tournament.findOneAndUpdate({ 'stage5.user2': null },
+                                    const result = await Tournament.findOneAndUpdate({_id : tournamentID, 'stage5.user2': null },
                                         { $set: { 'stage5.$.user2': user2 } }, { new: true })
                                     res.status(200).json({ success: true, data: result })
                                 }
@@ -749,13 +748,13 @@ class tournamenController {
                                 { new: true })
                             const winner = updateSore.bronzeMatch.find(element => element._id == matchID)
                             if (winner.score1 > winner.score2) {
-                                const final = await Tournament.findOneAndUpdate({ 'winner.third': null },
+                                const final = await Tournament.findOneAndUpdate({_id : tournamentID, 'winner.third': null },
                                     { $set: { "winner.$.third": user1 } }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
                             else if (winner.score1 < winner.score2) {
-                                const final = await Tournament.findOneAndUpdate({ 'winner.third': null },
+                                const final = await Tournament.findOneAndUpdate({_id : tournamentID, 'winner.third': null },
                                     { $set: { "winner.$.third": user2 }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
