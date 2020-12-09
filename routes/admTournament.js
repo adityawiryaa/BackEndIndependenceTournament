@@ -20,5 +20,8 @@ dataTournament.put('/match4/:tournamentID',authentication.committeAuth,admTourna
 dataTournament.put('/bronzeMatch/:tournamentID',authentication.committeAuth,admTournamentController.bronzeMatch)
 dataTournament.get('/committe/list',authentication.committeAuth,admTournamentController.tournamentByCommitte)
 dataTournament.get('/myTournament', authentication.userAuth,admTournamentController.myTournament)
+dataTournament.put('/ffa/match1/:tournamentID',authentication.committeAuth,admTournamentController.match1Ffa)
+dataTournament.put('/ffa/match2/:tournamentID',authentication.committeAuth,admTournamentController.match2Ffa)
+dataTournament.put('/ffa/match3/:tournamentID',authentication.committeAuth,admTournamentController.match3Ffa)
 
 module.exports = dataTournament
