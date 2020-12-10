@@ -145,10 +145,6 @@ class tournamenController {
         const { tournamentID } = req.params
         try {
             const tournament = await Tournament.findById(tournamentID)
-            // .populate('game')
-            // .populate('participant')
-            // .populate('waitinglist')
-            // .populate('winner')
             res.status(200).json({ success: true, data: tournament })
         }
         catch { next({ name: 'TOURNAMENT_FAILED' }) }

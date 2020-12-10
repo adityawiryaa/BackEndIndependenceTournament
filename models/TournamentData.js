@@ -21,7 +21,7 @@ const tournamentSchema = new Schema({
     game: { type: mongoose.Schema.Types.ObjectId, ref: 'Game', required: "Game Required" ,autopopulate: true},
     start: { type: String, default: 'Date Not specified' },
     end: { type: String, default: 'Date Not specified' },
-    rules: [],
+    rules: [],  
     waitinglist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User',autopopulate: true }],
     createAt: { type: String, default: (new Date()).toDateString() },
     stage1: [
