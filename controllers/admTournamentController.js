@@ -128,6 +128,8 @@ class tournamenController {
                     }, { new: true })
                     res.status(201).json({ success: true, data: generateBracket })
                 }
+                else if (req.body.type == 'free for all' && req.body.maxuser != 20 || req.body.type == 'free for all' && req.body.maxuser != 40) next({name : 'FFA_NOT_VALID'})
+                else if (req.body.type == 'single elimination' && req.body.maxuser != 4 || req.body.type == 'single elimination' && req.body.maxuser != 8 || req.body.type == 'single elimination' && req.body.maxuser != 16 ) next({name : 'SE_NOT_VALID'})
                 else next({ name: 'REQUIRED' })
             }
         }
@@ -198,11 +200,11 @@ class tournamenController {
         const { tournamentID } = req.params
         const tournament = await Tournament.findById(tournamentID)
         const user = await User.findById(req.body.user)
-        const found = tournament.waitinglist.find(element => element == req.body.user);
-        const userAlready = tournament.stage1.find(element => element.user == req.body.user);
+        console.log(req.body.user)
+        const found = tournament.waitinglist.find(element => element._id == req.body.user);
         try {
             if (tournament.createBy == req.userID && tournament.participant.length != tournament.maxuser && tournament.type == 'single elimination') {
-                if (found && !userAlready) {
+                if (found) {
                     const user1Update = await Tournament.findOne({ _id: tournamentID, 'stage1.user1': null })
                     const user2Update = await Tournament.findOne({ _id: tournamentID, 'stage1.user2': null })
                     if (user1Update) {
@@ -242,7 +244,7 @@ class tournamenController {
                 else next({ name: 'USER_NOT_FOUND' })
             }
             else if (tournament.createBy == req.userID && tournament.participant.length != tournament.maxuser && tournament.type == 'free for all') {
-                if (found && !userAlready) {
+                if (found) {
                     const user1Update = await Tournament.findOne({ _id: tournamentID, 'ffaStage1.user1': null })
                     const user2Update = await Tournament.findOne({ _id: tournamentID, 'ffaStage1.user2': null })
                     const user3Update = await Tournament.findOne({ _id: tournamentID, 'ffaStage1.user3': null })
@@ -396,9 +398,11 @@ class tournamenController {
             else if (tournament.type == 'free for all') {
                 const ffaStage1 = tournament.ffaStage1.find(elem => elem._id == matchID)
                 const ffaStage2 = tournament.ffaStage2.find(elem => elem._id == matchID)
+                const ffaStage3 = tournament.ffaStage3.find(elem => elem._id == matchID)
                 const bronzeMatch = tournament.bronzeMatch.find(elem => elem._id == matchID)
                 if (ffaStage1) res.status(200).json({ success: true, data: ffaStage1 })
                 else if (ffaStage2) res.status(200).json({ success: true, data: ffaStage2 })
+                else if (ffaStage3) res.status(200).json({ success: true, data: ffaStage3 })
                 else if (bronzeMatch) res.status(200).json({ success: true, data: bronzeMatch })
                 else next({ name: 'MATCH_FAILED' })
             }
@@ -825,7 +829,7 @@ class tournamenController {
     static async myTournament(req, res, next) {
         try {
             const tournament = await Tournament.find({ participant: req.userID })
-            res, status(200).json({ success: true, data: tournament })
+            res.status(200).json({ success: true, data: tournament })
         }
         catch { next({ name: "TOURNAMENT_FAILED" }) }
     }
@@ -834,14 +838,13 @@ class tournamenController {
         const { tournamentID } = req.params
         const tournament = await Tournament.findById(tournamentID)
         const stage1Match = await tournament.ffaStage1.find(element => element._id == matchID)
-        const stage2User1 = await tournament.ffaStage2.find(element => element.user1 == user1 || element.user2 == user1 || element.user3 == user1 || element.user4 == user1)
-        const stage2User2 = await tournament.ffaStage2.find(element => element.user1 == user2 || element.user2 == user2 || element.user3 == user2 || element.user4 == user2)
-        const stage2User3 = await tournament.ffaStage2.find(element => element.user1 == user3 || element.user2 == user3 || element.user3 == user3 || element.user4 == user3)
-        const stage2User4 = await tournament.ffaStage2.find(element => element.user1 == user4 || element.user2 == user4 || element.user3 == user4 || element.user4 == user4)
-        const stage2User5 = await tournament.ffaStage2.find(element => element.user1 == user5 || element.user2 == user5 || element.user3 == user5 || element.user4 == user5)
+        const stage2User1 = await tournament.ffaStage2.find(element => element.user1 )
+        const stage2User2 = await tournament.ffaStage2.find(element => element.user2 )
+        const stage2User3 = await tournament.ffaStage2.find(element => element.user3 )
+        const stage2User4 = await tournament.ffaStage2.find(element => element.user4 )
         try {
             if (tournament.createBy == req.userID) {
-                if (!stage2User1 && !stage2User2 && !stage2User3 && !stage2User4 && !stage2User5) {
+                if (!stage2User1 || !stage2User2 || !stage2User3 ||!stage2User4 ) {
                     if (stage1Match) {
                         const updateMatch = await Tournament.findOneAndUpdate({ _id: tournamentID, 'ffaStage1._id': matchID }, { $set: { 'ffaStage1.$.score1': score1, 'ffaStage1.$.score2': score2, 'ffaStage1.$.score3': score3, 'ffaStage1.$.score4': score4, 'ffaStage1.$.score5': score5 } }, { new: true })
                         const updateScore = await updateMatch.ffaStage1.find(element => element._id == matchID)
@@ -926,7 +929,7 @@ class tournamenController {
                             }
                             else next({ name: 'TOURNAMENT_FAILED' })
                         }
-                        else if (updateScore.score5 > updateScore.score1 && updateScore.score5 > updateScore.score2 && updateScore.score5 > updateScore.score4 && updateScore.score5 > updateScore.score4) {
+                        else if (updateScore.score5 > updateScore.score1 && updateScore.score5 > updateScore.score2 && updateScore.score5 > updateScore.score3 && updateScore.score5 > updateScore.score4) {
                             if (user1Null) {
                                 const bracket = await Tournament.findOneAndUpdate({ _id: tournamentID, 'ffaStage2.user1': null }, { $set: { 'ffaStage2.$.user1': user5 } }, { new: true })
                                 res.status(200).json({ success: true, data: bracket })
@@ -961,15 +964,14 @@ class tournamenController {
         const tournament = await Tournament.findById(tournamentID)
         const champion = await tournament.winner.find(element => element)
         const stage2Match = await tournament.ffaStage2.find(element => element._id == matchID)
-        const stage3User1 = await tournament.ffaStage3.find(element => element.user1 == user1 || element.user2 == user1 || element.user3 == user1 || element.user4 == user1)
-        const stage3User2 = await tournament.ffaStage3.find(element => element.user1 == user2 || element.user2 == user2 || element.user3 == user2 || element.user4 == user2)
-        const stage3User3 = await tournament.ffaStage3.find(element => element.user1 == user3 || element.user2 == user3 || element.user3 == user3 || element.user4 == user3)
-        const stage3User4 = await tournament.ffaStage3.find(element => element.user1 == user4 || element.user2 == user4 || element.user3 == user4 || element.user4 == user4)
+        const stage3User1 = await tournament.ffaStage3.find(element => element.user1)
+        const stage3User2 = await tournament.ffaStage3.find(element => element.user2)
+        const stage3User3 = await tournament.ffaStage3.find(element => element.user3)
+        const stage3User4 = await tournament.ffaStage3.find(element => element.user4)
         try {
             console.log(req.userID)
             console.log(tournament.createBy)
             if (tournament.createBy == req.userID) {
-                console.log('hei')
                 if (!stage3User1 && !stage3User2 && !stage3User3 && !stage3User4 && champion.first == null) {
                     if (stage2Match) {
                         const updateMatch = await Tournament.findOneAndUpdate({ _id: tournamentID, 'ffaStage2._id': matchID }, { $set: { 'ffaStage2.$.score1': score1, 'ffaStage2.$.score2': score2, 'ffaStage2.$.score3': score3, 'ffaStage2.$.score4': score4 } }, { new: true })

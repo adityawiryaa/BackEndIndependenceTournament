@@ -93,6 +93,14 @@ module.exports = (err,req,res,next) => {
         code = 500
         message = 'User already winner on this stage'
         break;
+        case 'FFA_NOT_VALID' :
+        code = 500;
+        message = 'Tournament type Free For All Not Valid,Max Participant Must 20 or 40'
+        break;
+        case 'SE_NOT_VALID' :
+        code = 500;
+        message = 'Tournament type Single Elimination Not Valid,Max Participant Must 4 or 8 or 16'
+        break;
         case  'ERROR' :
         code = 500;
         message = 'Internal server error';
