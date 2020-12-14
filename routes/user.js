@@ -12,5 +12,6 @@ dataUser.get('/detail',authentication.userAuth,userController.detailUser)
 dataUser.put('/update/password',authentication.userAuth,userController.updatePassword)
 dataUser.put('/update/data',authentication.userAuth,userController.updateUser)
 dataUser.get('/committe/list',authentication.headManAuth,userController.listCommitte)
+dataUser.delete('delete/committe/:committeID',authentication.headManAuth,userController.deleteCommitte)
 
 module.exports = dataUser

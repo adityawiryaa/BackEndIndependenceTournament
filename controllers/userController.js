@@ -133,4 +133,12 @@ module.exports = class userController {
         }
         catch { next({ name: 'USER_NOT_FOUND' }) }
     }
+    static async deleteCommitte(req,res,next) {
+        const {committeID} = req.params
+        try {
+            const committe = await User.findOneAndDelete({createBy : req.userID, _id : committeID})
+            res.status(200).json({success : true, msg : 'success delete committe'})
+        }
+        catch { next({ name: 'USER_NOT_FOUND' }) }
+    }
 }
