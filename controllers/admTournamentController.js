@@ -177,6 +177,7 @@ class tournamenController {
         const { tournamentID } = req.params
         const user = await User.findById(req.userID)
         const tournament = await Tournament.findById(tournamentID)
+        const idCommitte = tournament.createBy
         const userTournamentExist = await Tournament.findOne({ userNow: req.userID })
         const userTournamentWaiting = await Tournament.findOne({ waitinglist: req.userID })
         const totalWaiting = tournament.participant.length + tournament.waitinglist.length
@@ -186,6 +187,21 @@ class tournamenController {
                     if (user.role == 'user') {
                         if (userTournamentExist || userTournamentWaiting) next({ name: 'USER_EXIST' })
                         else {
+                            const committes = await User.findOneAndUpdate({ _id: idCommitte },
+                                {
+                                    $push: {
+                                        notification: {
+                                            $each: [{ 'notif': `${user.username} was register in tournament ${tournament.name}`, "time": new Date().toLocaleString() }]
+                                        }
+                                    }
+                                }, { new: true })
+
+                            if (committes.notification.length >= 5) {
+                                await User.findOneAndUpdate({ _id: idCommitte },
+                                    { $pop: { notification: -1 } },
+                                    { new: true }
+                                )
+                            }
                             const dataTournament = await Tournament.findOneAndUpdate({ _id: tournamentID },
                                 { $push: { waitinglist: req.userID } }, { new: true })
                             res.status(200).json({ success: true, data: dataTournament })
@@ -195,7 +211,7 @@ class tournamenController {
                 }
                 else next({ name: 'TOURNAMENT_FULL' })
             }
-            else next({name : 'AGE_LESS'})
+            else next({ name: 'AGE_LESS' })
         }
         catch { next({ name: 'TOURNAMENT_FAILED' }) }
     }
@@ -422,16 +438,13 @@ class tournamenController {
         const stage2Null = await tournament.stage2.find(element => element.user1 == null || element.user2 == null)
         const bronze = await tournament.bronzeMatch.find(element => element)
         try {
-            console.log('hei')
             if (tournament.createBy == req.userID) {
                 if (!stage2User1 && !stage2User2) {
-                    console.log('heis')
                     const updateSore = await Tournament.findOneAndUpdate({ 'stage1._id': matchID, _id: tournamentID },
                         { $set: { 'stage1.$.score1': score1, 'stage1.$.score2': score2 } },
                         { new: true })
                     const match = await updateSore.stage1.find(element => element._id == matchID)
                     if (match.score1 > match.score2) {
-                        console.log('sum')
                         if (tournament.stage1.length == 2) {
                             if (bronze.user1 == null) {
                                 await Tournament.findOneAndUpdate({ _id: tournamentID, 'bronzeMatch.user1': null },
@@ -445,7 +458,6 @@ class tournamenController {
                             }
                         }
                         if (stage2Null.user1 == null) {
-                            console.log('mun')
                             const result = await Tournament.findOneAndUpdate({ _id: tournamentID, 'stage2.user1': null },
                                 { $set: { 'stage2.$.user1': user1 } }, { new: true })
                             res.status(200).json({ success: true, data: result })
