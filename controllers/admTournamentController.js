@@ -181,7 +181,7 @@ class tournamenController {
         const userTournamentWaiting = await Tournament.findOne({ waitinglist: req.userID })
         const totalWaiting = tournament.participant.length + tournament.waitinglist.length
         try {
-            if (user.age < tournament.age || tournament.age == '' || tournament.age == null) {
+            if (user.age <= tournament.age || tournament.age == '' || tournament.age == null) {
                 if (totalWaiting != tournament.maxuser && tournament.participant.length != tournament.maxuser) {
                     if (user.role == 'user') {
                         if (userTournamentExist || userTournamentWaiting) next({ name: 'USER_EXIST' })

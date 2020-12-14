@@ -83,7 +83,7 @@ module.exports = (err,req,res,next) => {
         break;
         case 'AGE_LESS' :
         code = 500;
-        message = 'Cant Register, Check Max Age Tournament'
+        message = 'Cant Register, Your Age Not Valid for this Tournament'
         break;
         case 'GAME_FAILED' : 
         code = 404

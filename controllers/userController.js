@@ -136,7 +136,7 @@ module.exports = class userController {
     static async deleteCommitte(req,res,next) {
         const {committeID} = req.params
         try {
-            const committe = await User.findOneAndDelete({createBy : req.userID, _id : committeID})
+            const committe = await User.findOneAndDelete({createBy : req.userID, _id : committeID,role : 'committe'})
             if(committe){
             await Address.findByIdAndDelete(committeID)
             res.status(200).json({success : true, msg : 'success delete committe'})
