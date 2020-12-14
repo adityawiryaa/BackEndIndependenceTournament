@@ -219,7 +219,6 @@ class tournamenController {
         const { tournamentID } = req.params
         const tournament = await Tournament.findById(tournamentID)
         const user = await User.findById(req.body.user)
-        console.log(req.body.user)
         const found = tournament.waitinglist.find(element => element._id == req.body.user);
         try {
             if (tournament.createBy == req.userID && tournament.participant.length != tournament.maxuser && tournament.type == 'single elimination') {
@@ -246,7 +245,7 @@ class tournamenController {
                         {
                             $push: {
                                 notification: {
-                                    $each: [{ 'notif': `You was accept in tournament ${tournament.name} ,Good Luck!`, "time": new Date().toLocaleString() }]
+                                    $each: [{ 'notif': `You was accept in tournament ${tournament.name} ,Good Luck!`, "time": new Date().toLocaleString(),"tournament" : tournamentID }]
                                 }
                             }
                         },
