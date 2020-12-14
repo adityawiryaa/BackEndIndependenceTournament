@@ -191,7 +191,7 @@ class tournamenController {
                                 {
                                     $push: {
                                         notification: {
-                                            $each: [{ 'notif': `${user.username} was register in tournament ${tournament.name}`, "time": new Date().toLocaleString() }]
+                                            $each: [{ 'notif': `${user.username} was register in tournament ${tournament.name}`, "time": new Date().toLocaleString() ,"tournament" : tournamentID}]
                                         }
                                     }
                                 }, { new: true })

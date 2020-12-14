@@ -42,7 +42,8 @@ const userSchema = new mongoose.Schema({
         {
             _id : false,
             notif : String,
-            time : String
+            time : String,
+            tournament : String
         }
     ]
 
