@@ -422,13 +422,16 @@ class tournamenController {
         const stage2Null = await tournament.stage2.find(element => element.user1 == null || element.user2 == null)
         const bronze = await tournament.bronzeMatch.find(element => element)
         try {
+            console.log('hei')
             if (tournament.createBy == req.userID) {
                 if (!stage2User1 && !stage2User2) {
+                    console.log('heis')
                     const updateSore = await Tournament.findOneAndUpdate({ 'stage1._id': matchID, _id: tournamentID },
                         { $set: { 'stage1.$.score1': score1, 'stage1.$.score2': score2 } },
                         { new: true })
                     const match = await updateSore.stage1.find(element => element._id == matchID)
                     if (match.score1 > match.score2) {
+                        console.log('sum')
                         if (tournament.stage1.length == 2) {
                             if (bronze.user1 == null) {
                                 await Tournament.findOneAndUpdate({ _id: tournamentID, 'bronzeMatch.user1': null },
@@ -442,6 +445,7 @@ class tournamenController {
                             }
                         }
                         if (stage2Null.user1 == null) {
+                            console.log('mun')
                             const result = await Tournament.findOneAndUpdate({ _id: tournamentID, 'stage2.user1': null },
                                 { $set: { 'stage2.$.user1': user1 } }, { new: true })
                             res.status(200).json({ success: true, data: result })
