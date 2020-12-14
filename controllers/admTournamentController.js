@@ -189,7 +189,7 @@ class tournamenController {
                     if (user.role == 'user') {
                         if (userTournamentExist || userTournamentWaiting) next({ name: 'USER_EXIST' })
                         else {
-                            const committes = await User.findOneAndUpdate({ _id: idCommitte },
+                            await User.findOneAndUpdate({ _id: idCommitte },
                                 {
                                     $push: {
                                         notification: {
