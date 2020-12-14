@@ -138,9 +138,17 @@ module.exports = class userController {
         try {
             const committe = await User.findOneAndDelete({createBy : req.userID, _id : committeID,role : 'committe'})
             if(committe){
-            await Address.findByIdAndDelete(committeID)
+            await Address.findOneAndDelete({user : committe})
             res.status(200).json({success : true, msg : 'success delete committe'})
             }
+        }
+        catch { next({ name: 'USER_NOT_FOUND' }) }
+    }
+    static async deleteAccount(req,res,next){
+        try{
+            await User.findByIdAndDelete(req.userID)
+            await Address.findOneAndDelete({user : req.userID})
+            res.status(200).json({success : true, msg : 'success delete account'})
         }
         catch { next({ name: 'USER_NOT_FOUND' }) }
     }
