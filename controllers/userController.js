@@ -137,7 +137,10 @@ module.exports = class userController {
         const {committeID} = req.params
         try {
             const committe = await User.findOneAndDelete({createBy : req.userID, _id : committeID})
+            if(committe){
+            await Address.findByIdAndDelete(committeID)
             res.status(200).json({success : true, msg : 'success delete committe'})
+            }
         }
         catch { next({ name: 'USER_NOT_FOUND' }) }
     }
