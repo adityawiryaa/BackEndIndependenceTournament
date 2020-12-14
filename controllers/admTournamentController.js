@@ -176,8 +176,10 @@ class tournamenController {
     static async registerTournament(req, res, next) {
         const { tournamentID } = req.params
         const user = await User.findById(req.userID)
+
         const tournament = await Tournament.findById(tournamentID)
         const idCommitte = tournament.createBy
+        const committeData = await User.findById(idCommitte)
         const userTournamentExist = await Tournament.findOne({ userNow: req.userID })
         const userTournamentWaiting = await Tournament.findOne({ waitinglist: req.userID })
         const totalWaiting = tournament.participant.length + tournament.waitinglist.length
@@ -195,9 +197,9 @@ class tournamenController {
                                         }
                                     }
                                 }, { new: true })
-
-                            if (committes.notification.length >= 5) {
-                                await User.findOneAndUpdate({ _id: idCommitte },
+                            if(committeData.notification.length >= 5) {
+                                console.log('heo')
+                                await User.findByIdAndUpdate(idCommitte,
                                     { $pop: { notification: -1 } },
                                     { new: true }
                                 )
