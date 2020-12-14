@@ -197,7 +197,7 @@ class tournamenController {
                                         }
                                     }
                                 }, { new: true })
-                            if(committeData.notification.length >= 5) {
+                            if(committeData.notification.length >= 5 || committeData.notification.length == 5) {
                                 console.log('heo')
                                 await User.findByIdAndUpdate(idCommitte,
                                     { $pop: { notification: -1 } },
