@@ -81,6 +81,10 @@ module.exports = (err,req,res,next) => {
         code = 500;
         message = 'Game already exist'
         break;
+        case 'AGE_LESS' :
+        code = 500;
+        message = 'Cant Register, Check Max Age Tournament'
+        break;
         case 'GAME_FAILED' : 
         code = 404
         message = 'Game Not Found'
