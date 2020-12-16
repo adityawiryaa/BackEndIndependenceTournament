@@ -6,10 +6,12 @@ const tournamentSchema = new Schema({
     participant: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'User',autopopulate: true }
     ],
+    url : {type : String,required :  "Url Tournament Required" },
     userNow: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
     ],
     createBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    headman : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     maxuser: { type: Number, required: "Max User Required" },
     type: { type: String, required: "Type Tournament Required" },
     prize: {

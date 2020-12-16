@@ -3,11 +3,11 @@ const Adress = require('../models/AdressData')
 class addressController {
 
     static async createAdress(req, res, next) {
-        const {district, city, province, country, phone, zip } = req.body
+        const {district, city, province, zip } = req.body
         try {
             const addressData = await Adress.findOne({ user: req.userID })
             if (addressData) {
-                const newAdress = { district, city, province, country, phone, zip}
+            const newAdress = { district, city, province, zip}
         for(let key in newAdress) if(!newAdress[key]) delete newAdress[key]
         const addressData = await Adress.findOneAndUpdate({user : req.userID},newAdress,{new : true})
         res.status(200).json({result : true, data : addressData})
@@ -15,7 +15,7 @@ class addressController {
             else {
                 const address = await new Adress({
                     user: req.userID,
-                     district, city, province, country, phone,zip
+                     district, city, province,zip
                 })
                 address.save()
                 res.status(200).json({ success: true, data: address })
@@ -31,8 +31,8 @@ class addressController {
         }
         catch(e){next({name :'USER_NOT_FOUND' })}
     }
-    static async updateAdress(req,res,next){
-      const { district, city, province, country, phone, zip} = req.body
+    static async updateAdress(req,res,next){    
+      const { district, city, province, phone, zip} = req.body
       try{
         const newAdress = { district, city, province, country, phone, zip}
         for(let key in newAdress) if(!newAdress[key]) delete newAdress[key]

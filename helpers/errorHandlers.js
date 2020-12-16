@@ -33,6 +33,10 @@ module.exports = (err,req,res,next) => {
         code = 500;
         message = 'Number Phone Already Exist'
         break;
+        case 'ADDRESS_EXIST':
+        code = 500;
+        message = 'Address for headman already exist!'
+        break;
         case 'USERNAME_EXIST': 
         code = 500;
         message = 'Username Already Exist'
@@ -52,6 +56,14 @@ module.exports = (err,req,res,next) => {
         case 'MISSING_TOKEN':
         code = 404;
         message = 'Token is required'
+        break;
+        case 'URL_EXIST' :
+        code = 500;
+        message = 'Url Already Exist'
+        break;
+        case 'ONLY_ONE_GAME' :
+        code = 500;
+        message = 'Your tournament game was already exist for other tournament'
         break;
         case 'INCORRECT_TOKEN':
         code = 404;

@@ -29,15 +29,19 @@ module.exports = class userController {
         const user = await User.findOne({ email: email })
         const userPhone = await User.findOne({ phone: phone })
         const userUsername = await User.findOne({ username: username })
+        const addressExist = await Address.findOne({address : req.body.address})
         try {
             if (user) next({ name: 'ALREADY_EXIST' })
             else if (userPhone) next({ name: 'PHONE_EXIST' })
             else if (userUsername) next({ name: 'USERNAME_EXIST' })
+            else if( addressExist) next({ name : 'ADDRESS_EXIST'})
             else {
                 const userData = new User({ email, password, username, role: 'headman', phone, age })
                 const salt = bcrypt.genSaltSync(10)
                 userData.password = bcrypt.hashSync(userData.password, salt)
                 await userData.save()
+                const address = new Address({ district: req.body.address, user: userData._id })
+                await address.save()
                 res.status(201).json({ success: true, data: userData })
             }
         }
