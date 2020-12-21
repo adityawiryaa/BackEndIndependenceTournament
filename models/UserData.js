@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
 
 const userSchema = new mongoose.Schema({
     email : { 
@@ -19,6 +18,18 @@ const userSchema = new mongoose.Schema({
         minLength : [3, 'Username must be atLeast 3 character long'],
         maxlength : [12, 'Username must be atLeast 12 character long']
     },
+    team : {
+        name : {type : String, default : null},
+        phone : {type : String,default : null},
+        member1 : {type : String, default : null},
+        member2 : {type : String,default : null},
+        tournament : {type : String,default : null}
+    },
+    listTournamentTeam : [{
+        _id : false,
+        tournament : { type: mongoose.Schema.Types.ObjectId, ref: 'Tournament',autopopulate : true },
+    }
+    ],
     phone : {
         type : String,
         unique :  true,
@@ -49,5 +60,6 @@ const userSchema = new mongoose.Schema({
 
 })
 
+userSchema.plugin(require('mongoose-autopopulate'));
 const DataUser = mongoose.model('User',userSchema)
 module.exports = DataUser

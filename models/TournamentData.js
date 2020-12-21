@@ -10,6 +10,7 @@ const tournamentSchema = new Schema({
     userNow: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
     ],
+    district : {type : String},
     createBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     headman : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     maxuser: { type: Number, required: "Max User Required" },
