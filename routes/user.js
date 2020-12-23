@@ -4,6 +4,7 @@ const userController = require('../controllers/userController')
 const authentication = require('../middleware/authentication')
 let bouncer = require ("express-bouncer")(600000,600000,5);
 
+bouncer.whitelist.push("127.0.0.1");
 bouncer.blocked = function (req, res, next, remaining)
 {
     res.status(429).json({status : 429, message : "Too many requests have been made, " +
@@ -21,5 +22,4 @@ dataUser.put('/update/data',authentication.userAuth,userController.updateUser)
 dataUser.get('/committe/list',authentication.headManAuth,userController.listCommitte)
 dataUser.delete('/delete/committe/:committeID',authentication.headManAuth,userController.deleteCommitte)
 dataUser.delete('/delete',authentication.userAuth,userController.deleteAccount)
-bouncer.addresses = { };
 module.exports = dataUser
