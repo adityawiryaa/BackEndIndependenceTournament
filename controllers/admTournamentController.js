@@ -189,7 +189,7 @@ class tournamenController {
         const dataTournament = Tournament.findOne({ createBy: req.userID, url: urlID })
         try {
             if (dataTournament) {
-                const tournament = await Tournament.findOne({ url: urlID },
+                const tournament = await Tournament.findOneAndUpdate({ url: urlID },
                     { $push: { rules: req.body.rules } },
                     { new: true })
                 res.status(200).json({ success: true, data: tournament })
