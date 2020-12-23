@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 const tournamentSchema = new Schema({
     name: { type: String, required: "Name Tournament Required" },
     participant: [
-        { type: mongoose.Schema.Types.ObjectId, ref: 'User',autopopulate: true }
+        { type: mongoose.Schema.Types.ObjectId, ref: 'User'}
     ],
     url : {type : String,required :  "Url Tournament Required" },
     userNow: [
@@ -21,11 +21,11 @@ const tournamentSchema = new Schema({
         third: { type: String, required: "Prize Third Required" }
     },
     age: { type: Number, default: 'all' },
-    game: { type: mongoose.Schema.Types.ObjectId, ref: 'Game', required: "Game Required" ,autopopulate: true},
+    game: { type: mongoose.Schema.Types.ObjectId, ref: 'Game', required: "Game Required"},
     start: { type: String, default: 'Date Not specified' },
     end: { type: String, default: 'Date Not specified' },
     rules: [],  
-    waitinglist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User',autopopulate: true }],
+    waitinglist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     createAt: { type: String, default: (new Date()).toDateString() },
     stage1: [
         {
@@ -84,9 +84,9 @@ const tournamentSchema = new Schema({
     winner: [
         {
             _id: false,
-            first: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
-            second: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
-            third: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
+            first: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+            second: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+            third: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
         }
     ],
     ffaStage1: [
@@ -127,7 +127,7 @@ const tournamentSchema = new Schema({
         match: { type: String, default: null }
     }],
 
-    status: []
+    status: String
 })
 
 tournamentSchema.plugin(require('mongoose-autopopulate'));

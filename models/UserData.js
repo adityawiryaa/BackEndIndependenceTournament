@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
     },
     listTournamentTeam : [{
         _id : false,
-        tournament : { type: mongoose.Schema.Types.ObjectId, ref: 'Tournament',autopopulate : true },
+        tournament : { type: mongoose.Schema.Types.ObjectId, ref: 'Tournament'},
     }
     ],
     phone : {
@@ -60,6 +60,5 @@ const userSchema = new mongoose.Schema({
 
 })
 
-userSchema.plugin(require('mongoose-autopopulate'));
 const DataUser = mongoose.model('User',userSchema)
 module.exports = DataUser

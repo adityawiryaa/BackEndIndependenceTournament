@@ -7,5 +7,6 @@ addressData.post('/',authentication.userAuth,addressController.createAdress)
 addressData.get('/',authentication.userAuth,addressController.getAdress)
 addressData.put('/update',authentication.userAuth,addressController.updateAdress)
 addressData.delete('/',authentication.userAuth,addressController.deleteAddress)
+addressData.get('/headman',addressController.listDistrict)
 
 module.exports = addressData

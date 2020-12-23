@@ -1,4 +1,5 @@
 const Adress = require('../models/AdressData')
+const User = require('../models/UserData')
 
 class addressController {
 
@@ -47,7 +48,11 @@ class addressController {
         }
         else {next({name :'USER_NOT_FOUND' })}
     }
-
+    static async listDistrict(req,res,next){
+        const data = await Adress.find().populate('user')
+        let district = data.filter(el => el.user.role == 'headman')
+        res.status(200).json({success : true, data : district})
+    }
 }
 
 module.exports = addressController

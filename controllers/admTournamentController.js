@@ -30,7 +30,8 @@ class tournamenController {
                         first: req.body.first,
                         second: req.body.second,
                         third: req.body.third
-                    }
+                    },
+                    status : 'open'
                 })
                 if (req.body.maxuser == 4 && req.body.type == 'single elimination') {
                     await tournament.save()
@@ -168,7 +169,7 @@ class tournamenController {
     }
     static async listTournament(req, res, next) {
         try {
-            const tournament = await Tournament.find()
+            const tournament = await Tournament.find({},{},{autopopulate :false})
                 .populate('game')
             res.status(200).json({ success: true, data: tournament })
         }
@@ -178,7 +179,8 @@ class tournamenController {
         const { urlID } = req.params
         try {
             const tournament = await Tournament.findOne({ url: urlID })
-            res.status(200).json({ success: true, data: tournament })
+                    .populate('participant').populate('waitingList').populate('winner.first').populate('winner.second').populate('winner.third').populate('game')
+                res.status(200).json({ success: true, data: tournament })
         }
         catch { next({ name: 'TOURNAMENT_FAILED' }) }
     }
@@ -219,6 +221,7 @@ class tournamenController {
                     if (user.role == 'user') {
                         if (userTournamentExist || userTournamentWaiting) next({ name: 'USER_EXIST' })
                         else {
+                            await User.findByIdAndUpdate(req.userID, {$set : {'team.tournament' : null}}, {new : true})
                             await User.findOneAndUpdate({ _id: idCommitte },
                                 {
                                     $push: {
@@ -248,7 +251,7 @@ class tournamenController {
     }
     static async teamRegister(req, res, next) {
         const { urlID } = req.params
-        const {name,phone,member1,member2} = req.body
+        const { name, phone, member1, member2 } = req.body
         const user = await User.findById(req.userID)
         const tournament = await Tournament.findOne({ url: urlID })
         const idCommitte = tournament.createBy
@@ -264,8 +267,8 @@ class tournamenController {
                         else {
                             if (user.team.name == null) {
                                 await User.findByIdAndUpdate(req.userID,
-                                    {$set : {'team.name' : name,'team.phone': phone, 'team.member1' : member1, 'team.member2' : member2,'team.tournament' : tournament.url}} , 
-                                    {new : true})
+                                    { $set: { 'team.name': name, 'team.phone': phone, 'team.member1': member1, 'team.member2': member2, 'team.tournament': tournament.url } },
+                                    { new: true })
                                 await User.findOneAndUpdate({ _id: idCommitte },
                                     {
                                         $push: {
@@ -284,8 +287,8 @@ class tournamenController {
                                     { $push: { waitinglist: req.userID } }, { new: true })
                                 res.status(200).json({ success: true, data: dataTournament })
                             }
-                            else if(user.team.name != null) {
-                                await User.findOneAndUpdate({_id : req.userID},{$set : {'team.tournament' : tournament.url}},{new : true})
+                            else if (user.team.name != null) {
+                                await User.findOneAndUpdate({ _id: req.userID }, { $set: { 'team.tournament': tournament.url } }, { new: true })
                                 await User.findOneAndUpdate({ _id: idCommitte },
                                     {
                                         $push: {
@@ -340,9 +343,11 @@ class tournamenController {
                         { $pull: { waitinglist: req.body.user }, $addToSet: { participant: req.body.user, userNow: req.body.user } },
                         { new: true }
                     )
-                    if(user.team.tournament == tournament.url){
+                    if (user.team.tournament == tournament.url) {
                         await User.findOneAndUpdate({ _id: req.body.user },
-                            {$addToSet: {listTournamentTeam: {
+                            {
+                                $addToSet: {
+                                    listTournamentTeam: {
                                         $each: [{ 'tournament': tournament._id }]
                                     }
                                 }
@@ -407,7 +412,7 @@ class tournamenController {
                                 $set: { "ffaStage1.$.user5": req.body.user }
                             }, { new: true })
                     }
-                    if(user.team.tournament == tournament.url){
+                    if (user.team.tournament == tournament.url) {
                         await User.findOneAndUpdate({ _id: req.body.user },
                             {
                                 $addToSet: {
@@ -486,7 +491,7 @@ class tournamenController {
     static async startTournament(req, res, next) {
         try {
             const { urlID } = req.params
-            await Tournament.findOneAndUpdate({ url: urlID }, { $addToSet: { status: 'Ongoing' } }, { new: true })
+            await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'ongoing' } }, { new: true })
             const dataTournament = await Tournament.findOne({ url: urlID })
             if (dataTournament.type == 'single elimination' && dataTournament.createBy == req.userID) {
                 let random = dataTournament.stage1
