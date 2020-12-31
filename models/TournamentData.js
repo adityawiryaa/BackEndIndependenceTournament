@@ -91,6 +91,15 @@ const tournamentSchema = new Schema({
             match: { type: String, default: null }
         }
     ],
+    stage8: [
+        {
+            user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
+            score1: { type: Number, default: null },
+            user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
+            score2: { type: Number, default: null },
+            match: { type: String, default: null }
+        }
+    ],
     bronzeMatch: [
         {
             user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
