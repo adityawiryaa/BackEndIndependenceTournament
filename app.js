@@ -16,7 +16,6 @@ app.use(bodyParser.json())
 app.use(express.json());
 app.use(routers)
 
-
 app.listen(port, () => {
     console.log(`App run on http://localhost:${port}`)
 })

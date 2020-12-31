@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "test": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -24,10 +25,12 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-bouncer": "^0.2.0",
-    "ioredis": "^4.19.4",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.13",
     "mongoose-autopopulate": "^0.12.3",
-    "rate-limiter-flexible": "^2.1.15"
+    "supertest": "^6.0.1"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3"
   }
 }

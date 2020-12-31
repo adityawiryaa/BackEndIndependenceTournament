@@ -18,6 +18,7 @@ class tournamenController {
                     name: req.body.name,
                     url: req.body.url,
                     createBy: req.userID,
+                    format: req.body.format,
                     district: address.district,
                     headman: committe.createBy,
                     game: req.body.game,
@@ -31,117 +32,281 @@ class tournamenController {
                         second: req.body.second,
                         third: req.body.third
                     },
-                    status : 'open'
+                    status: 'open'
                 })
-                if (req.body.maxuser == 4 && req.body.type == 'single elimination') {
-                    await tournament.save()
-                    const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name }, {
-                        $push: {
-                            stage1: {
-                                $each: [{ 'match': 1 }, { 'match': 2 },]
-                            },
-                            stage2: {
-                                $each: [{ 'match': 3 }]
-                            },
-                            bronzeMatch: {
-                                $each: [{ 'match': null }]
-                            },
-                            winner: {
-                                $each: [{}]
+                if (req.body.maxuser >= 4 && req.body.maxuser <= 100 && req.body.type == 'single elimination') {
+                    const s1 = []
+                    const s2 = []
+                    const s3 = []
+                    const s4 = []
+                    const s5 = []
+                    const s6 = []
+                    const sisa = []
+                    if (req.body.maxuser > 4 && req.body.maxuser < 8) {
+                        for (let z = 1; z <= req.body.maxuser % 4; z++) {
+                            sisa.push({ match: z })
+                        }
+                        for (let a = 2; a <= 4; a = a + 2) {
+                            s1.push({ match: a })
+                        }
+                        for (let b = 4; b <= 4; b = b + 4) {
+                            s2.push({ match: b })
+                        }
+                    }
+                    else if (req.body.maxuser > 8 && req.body.maxuser < 16) {
+                        for (let z = 1; z <= req.body.maxuser % 8; z++) {
+                            sisa.push({ match: z })
+                        }
+                        for (let a = 2; a <= 8; a = a + 2) {
+                            s1.push({ match: a })
+                        }
+                        for (let b = 4; b <= 8; b = b + 4) {
+                            s2.push({ match: b })
+                        }
+                        for (let c = 8; c <= 8; c = c + 8) {
+                            s3.push({ match: c })
+                        }
+                    }
+                    else if (req.body.maxuser > 16 && req.body.maxuser < 32) {
+                        for (let z = 1; z <= req.body.maxuser % 16; z++) {
+                            sisa.push({ match: z })
+                        }
+                        for (let a = 2; a <= 16; a = a + 2) {
+                            s1.push({ match: a })
+                        }
+                        for (let b = 4; b <= 16; b = b + 4) {
+                            s2.push({ match: b })
+                        }
+                        for (let c = 8; c <= 16; c = c + 8) {
+                            s3.push({ match: c })
+                        }
+                        for (let d = 16; d <= 16; d = d + 16) {
+                            s4.push({ match: d })
+                        }
+                    }
+                    else if (req.body.maxuser > 32 && req.body.maxuser < 64) {
+                        for (let z = 1; z <= req.body.maxuser % 32; z++) {
+                            sisa.push({ match: z })
+                        }
+                        for (let a = 2; a <= 16; a = a + 2) {
+                            s1.push({ match: a })
+                        }
+                        for (let b = 4; b <= 16; b = b + 4) {
+                            s2.push({ match: b })
+                        }
+                        for (let c = 8; c <= 16; c = c + 8) {
+                            s3.push({ match: c })
+                        }
+                        for (let d = 16; d <= 16; d = d + 16) {
+                            s4.push({ match: d })
+                        }
+                        for (let e = 32; e <= 32; e = e + 32) {
+                            s5.push({ match: e })
+                        }
+                    }
+                    else if (req.body.maxuser > 64 && req.body.maxuser < 101) {
+                        for (let z = 1; z <= req.body.maxuser % 64; z++) {
+                            sisa.push({ match: z })
+                        }
+                        for (let a = 2; a <= 16; a = a + 2) {
+                            s1.push({ match: a })
+                        }
+                        for (let b = 4; b <= 16; b = b + 4) {
+                            s2.push({ match: b })
+                        }
+                        for (let c = 8; c <= 16; c = c + 8) {
+                            s3.push({ match: c })
+                        }
+                        for (let d = 16; d <= 16; d = d + 16) {
+                            s4.push({ match: d })
+                        }
+                        for (let e = 32; e <= 32; e = e + 32) {
+                            s5.push({ match: e })
+                        }
+                        for (let f = 64; f <= 64; f = f + 64) {
+                            s6.push({ match: f })
+                        }
+                    }
+                    if (req.body.maxuser == 4 || req.body.maxuser == 8 || req.body.maxuser == 16 || req.body.maxuser == 32 || req.body.maxuser == 64) {
+                        await tournament.save()
+                        if (req.body.maxuser == 4) {
+                            for (let a = 2; a <= 4; a = a + 2) {
+                                s1.push({ match: a })
+                            }
+                            for (let b = 4; b <= 4; b = b + 4) {
+                                s2.push({ match: b })
                             }
                         }
-                    }, { new: true })
-                    res.status(201).json({ success: true, data: generateBracket })
-                }
-                else if (req.body.maxuser == 8 && req.body.type == 'single elimination') {
-                    await tournament.save()
-                    const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name }, {
-                        $push: {
-                            stage1: {
-                                $each: [{ 'match': 1 }, { 'match': 2 }, { 'match': 3 }, { 'match': 4 }]
-                            },
-                            stage2: {
-                                $each: [{ 'match': 5 }, { 'match': 6 }]
-                            },
-                            stage3: {
-                                $each: [{ 'match': 7 }]
-                            },
-                            bronzeMatch: {
-                                $each: [{ 'match': null }]
-                            },
-                            winner: {
-                                $each: [{}]
+                        else if (req.body.maxuser == 8) {
+                            for (let a = 2; a <= 8; a = a + 2) {
+                                s1.push({ match: a })
+                            }
+                            for (let b = 4; b <= 8; b = b + 4) {
+                                s2.push({ match: b })
+                            }
+                            for (let c = 8; c <= 8; c = c + 8) {
+                                s3.push({ match: c })
                             }
                         }
-                    }, { new: true })
-                    res.status(201).json({ success: true, data: generateBracket })
-                }
-                else if (req.body.maxuser == 16 && req.body.type == 'single elimination') {
-                    await tournament.save()
-                    const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name }, {
-                        $push: {
-                            stage1: {
-                                $each: [{ 'match': 1 }, { 'match': 2 }, { 'match': 3 }, { 'match': 4 }, { 'match': 5 }, { 'match': 6 }, { 'match': 7 }, { 'match': 8 }]
-                            },
-                            stage2: {
-                                $each: [{ 'match': 9 }, { 'match': 10 }, { 'match': 11 }, { 'match': 12 }]
-                            },
-                            stage3: {
-                                $each: [{ 'match': 12 }, { 'match': 14 }]
-                            },
-                            stage4: {
-                                $each: [{ 'match': 15 }]
-                            },
-                            bronzeMatch: {
-                                $each: [{ 'match': null }]
-                            },
-                            winner: {
-                                $each: [{}]
+                        else if (req.body.maxuser == 16) {
+                            for (let a = 2; a <= 16; a = a + 2) {
+                                s1.push({ match: a })
+                            }
+                            for (let b = 4; b <= 16; b = b + 4) {
+                                s2.push({ match: b })
+                            }
+                            for (let c = 8; c <= 16; c = c + 8) {
+                                s3.push({ match: c })
+                            }
+                            for (let d = 16; d <= 16; d = d + 16) {
+                                s4.push({ match: d })
                             }
                         }
-                    }, { new: true })
-                    res.status(201).json({ success: true, data: generateBracket })
-                }
-                else if (req.body.maxuser == 20 && req.body.type == 'free for all') {
-                    await tournament.save()
-                    const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name }, {
-                        $push: {
-                            ffaStage1: {
-                                $each: [{ 'match': 1 }, { 'match': 2 }, { 'match': 3 }, { 'match': 4 }]
-                            },
-                            ffaStage2: {
-                                $each: [{ 'match': 5 }]
-                            },
-                            winner: {
-                                $each: [{}]
+                        else if (req.body.maxuser == 32) {
+                            for (let a = 2; a <= 32; a = a + 2) {
+                                s1.push({ match: a })
+                            }
+                            for (let b = 4; b <= 32; b = b + 4) {
+                                s2.push({ match: b })
+                            }
+                            for (let c = 8; c <= 32; c = c + 8) {
+                                s3.push({ match: c })
+                            }
+                            for (let d = 16; d <= 32; d = d + 16) {
+                                s4.push({ match: d })
+                            }
+                            for (let e = 32; e <= 32; e = e + 32) {
+                                s5.push({ match: e })
                             }
                         }
-                    }, { new: true })
-                    res.status(201).json({ success: true, data: generateBracket })
-                }
-                else if (req.body.maxuser == 40 && req.body.type == 'free for all') {
-                    await tournament.save()
-                    const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name }, {
-                        $push: {
-                            ffaStage1: {
-                                $each: [{ 'match': 1 }, { 'match': 2 }, { 'match': 3 }, { 'match': 4 }, { 'match': 5 }, { 'match': 6 }, { 'match': 7 }, { 'match': 8 }]
-                            },
-                            ffaStage2: {
-                                $each: [{ 'match': 9 }, { 'match': 10 }]
-                            },
-                            ffaStage3: {
-                                $each: [{ 'match': 11 }]
-                            },
-                            winner: {
-                                $each: [{}]
+                        else if (req.body.maxuser == 64) {
+                            for (let a = 2; a <= 64; a = a + 2) {
+                                s1.push({ match: a })
+                            }
+                            for (let b = 4; b <= 64; b = b + 4) {
+                                s2.push({ match: b })
+                            }
+                            for (let c = 8; c <= 64; c = c + 8) {
+                                s3.push({ match: c })
+                            }
+                            for (let d = 16; d <= 64; d = d + 16) {
+                                s4.push({ match: d })
+                            }
+                            for (let e = 32; e <= 64; e = e + 32) {
+                                s5.push({ match: e })
+                            }
+                            for (let f = 64; f <= 64; f = f + 64) {
+                                s6.push({ match: f })
                             }
                         }
-                    }, { new: true })
-                    res.status(201).json({ success: true, data: generateBracket })
+                        const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name }, {
+                            $push: {
+                                stage1: s1,
+                                stage2: s2,
+                                stage3: s3,
+                                stage4: s4,
+                                stage5: s5,
+                                stage6: s6,
+                                bronzeMatch: {
+                                    $each: [{ 'match': null }]
+                                },
+                                winner: {
+                                    $each: [{}]
+                                }
+                            }
+                        }, { new: true })
+                        res.status(201).json({ success: true, data: generateBracket })
+                    }
+                    else {
+                        await tournament.save()
+                        const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name }, {
+                            $push: {
+                                stage1: sisa,
+                                stage2: s1,
+                                stage3: s2,
+                                stage4: s3,
+                                stage5: s4,
+                                stage6: s5,
+                                stage7: s6,
+                                bronzeMatch: {
+                                    $each: [{ 'match': null }]
+                                },
+                                winner: {
+                                    $each: [{}]
+                                }
+                            }
+                        }, { new: true })
+                        res.status(201).json({ success: true, data: generateBracket })
+                    }
+
                 }
-                else if (req.body.type == 'free for all' && req.body.maxuser != 20 || req.body.type == 'free for all' && req.body.maxuser != 40) next({ name: 'FFA_NOT_VALID' })
-                else if (req.body.type == 'single elimination' && req.body.maxuser != 4 || req.body.type == 'single elimination' && req.body.maxuser != 8 || req.body.type == 'single elimination' && req.body.maxuser != 16) next({ name: 'SE_NOT_VALID' })
-                else next({ name: 'REQUIRED' })
+                else if (req.body.maxuser >= 4 && req.body.maxuser <= 100 && req.body.type == 'free for all') {
+                    if (req.body.group == null || req.body.group == '' || req.body.group > 10) next({ name: 'GROUP_REQUIRED' })
+                    else {
+                        await tournament.save()
+                        const userByGroup = {}
+                        const ffa1 = []
+                        const ffa2 = []
+                        const ffa3 = []
+                        const sisa1 = {}
+                        const sisa2 = {}
+                        for (let i = 1; i <= req.body.group; i++) {
+                            userByGroup['user' + i] = null;
+                        }
+                        if (req.body.maxuser % req.body.group == 0) {
+                            for (let a = 1; a <= req.body.maxuser / req.body.group; a++) {
+                                ffa1.push(userByGroup)
+                            }
+                        }
+                        else {
+                            for (let a = 1; a <= req.body.maxuser % req.body.group; a++) {
+                                sisa1['user' + a] = null
+                            }
+                            for (let a = 1; a <= req.body.maxuser / req.body.group; a++) {
+                                ffa1.push(userByGroup)
+                            }
+                            ffa1.push(sisa1)
+                        }
+                        // s2
+                        if (ffa1.length % req.body.group == 0) {
+                            if (ffa1.length == req.body.group) {
+                                ffa2.push(userByGroup)
+                            }
+                            else {
+                                for (let b = 1; b <= ffa1.length / req.body.group; b++) {
+                                    ffa2.push(userByGroup)
+                                }
+                            }
+                        }
+                        else {
+                            if (ffa1.length % req.body.group != 0) {
+                                for (let x = 1; x <= ffa1.length % req.body.group; x++) {
+                                    sisa2['user' + x] = null
+                                }
+                                for (let b = 1; b <= ffa1.length / req.body.group; b++) {
+                                    ffa2.push(userByGroup)
+                                }
+                                ffa2.push(sisa2)
+                            }
+                        }
+                        // s3
+                        if (ffa2.length >= 2) {
+                            ffa3.push(userByGroup)
+                        }
+                        const generateBracket = await Tournament.findOneAndUpdate({ name: req.body.name }, {
+                            $push: {
+                                ffaStage1: ffa1,
+                                ffaStage2: ffa2,
+                                ffaStage3: ffa3,
+                                winner: {
+                                    $each: [{}]
+                                }
+                            }
+                        }, { new: true })
+                        res.status(201).json({ success: true, data: generateBracket })
+                    }
+                }
+                else next({ name: 'TOURNAMENT_INCORRECT' })
             }
         }
         catch { next({ name: 'REQUIRED' }) }
@@ -162,14 +327,14 @@ class tournamenController {
     }
     static async myTournament(req, res, next) {
         try {
-            const tournament = await Tournament.find({ participant: req.userID })
+            const tournament = await Tournament.find({ $or: [{ participant: req.userID }, { team: req.userID }] })
             res.status(200).json({ success: true, data: tournament })
         }
         catch { next({ name: "TOURNAMENT_FAILED" }) }
     }
     static async listTournament(req, res, next) {
         try {
-            const tournament = await Tournament.find({},{},{autopopulate :false})
+            const tournament = await Tournament.find({}, {}, { autopopulate: false })
                 .populate('game')
             res.status(200).json({ success: true, data: tournament })
         }
@@ -179,8 +344,8 @@ class tournamenController {
         const { urlID } = req.params
         try {
             const tournament = await Tournament.findOne({ url: urlID })
-                    .populate('participant').populate('waitingList').populate('winner.first').populate('winner.second').populate('winner.third').populate('game')
-                res.status(200).json({ success: true, data: tournament })
+                .populate('participant').populate('waitinglist').populate('winner.first').populate('winner.second').populate('winner.third').populate('game').populate('team')
+            res.status(200).json({ success: true, data: tournament })
         }
         catch { next({ name: 'TOURNAMENT_FAILED' }) }
     }
@@ -212,21 +377,20 @@ class tournamenController {
         const tournament = await Tournament.findOne({ url: urlID })
         const idCommitte = tournament.createBy
         const committeData = await User.findById(idCommitte)
-        const userTournamentExist = await Tournament.findOne({ userNow: req.userID })
-        const userTournamentWaiting = await Tournament.findOne({ waitinglist: req.userID })
+        const userTournamentExist = await Tournament.findOne({ $or: [{ team: req.userID }, { participant: req.userID }, { waitinglist: req.userID }] })
         const totalWaiting = tournament.participant.length + tournament.waitinglist.length
         try {
-            if (user.age <= tournament.age || tournament.age == '' || tournament.age == null) {
+            if (user.age >= tournament.age || tournament.age == '' || tournament.age == null || tournament.age == 0) {
                 if (totalWaiting != tournament.maxuser && tournament.participant.length != tournament.maxuser) {
                     if (user.role == 'user') {
-                        if (userTournamentExist || userTournamentWaiting) next({ name: 'USER_EXIST' })
+                        if (userTournamentExist) next({ name: 'USER_EXIST' })
                         else {
-                            await User.findByIdAndUpdate(req.userID, {$set : {'team.tournament' : null}}, {new : true})
+                            await User.findByIdAndUpdate(req.userID, { $set: { 'team.tournament': null } }, { new: true })
                             await User.findOneAndUpdate({ _id: idCommitte },
                                 {
                                     $push: {
                                         notification: {
-                                            $each: [{ 'notif': `${user.username} was register in tournament ${tournament.name}`, "time": new Date().toLocaleString(), "tournament": urlID }]
+                                            $each: [{ 'notif': `${user.username} was register in tournament ${tournament.name}`, "time": new Date().toLocaleString(), }]
                                         }
                                     }
                                 }, { new: true })
@@ -256,14 +420,13 @@ class tournamenController {
         const tournament = await Tournament.findOne({ url: urlID })
         const idCommitte = tournament.createBy
         const committeData = await User.findById(idCommitte)
-        const userTournamentExist = await Tournament.findOne({ userNow: req.userID })
-        const userTournamentWaiting = await Tournament.findOne({ waitinglist: req.userID })
+        const userTournamentExist = await Tournament.findOne({ $or: [{ team: req.userID }, { participant: req.userID }, { waitinglist: req.userID }] })
         const totalWaiting = tournament.participant.length + tournament.waitinglist.length
         try {
-            if (user.age <= tournament.age || tournament.age == '' || tournament.age == null) {
+            if (user.age >= tournament.age || tournament.age == '' || tournament.age == null || tournament.age == 0) {
                 if (totalWaiting != tournament.maxuser && tournament.participant.length != tournament.maxuser) {
                     if (user.role == 'user') {
-                        if (userTournamentExist || userTournamentWaiting) next({ name: 'USER_EXIST' })
+                        if (userTournamentExist) next({ name: 'USER_EXIST' })
                         else {
                             if (user.team.name == null) {
                                 await User.findByIdAndUpdate(req.userID,
@@ -273,7 +436,7 @@ class tournamenController {
                                     {
                                         $push: {
                                             notification: {
-                                                $each: [{ 'notif': `${user.team.name} was register in tournament ${tournament.name}`, "time": new Date().toLocaleString(), "tournament": urlID }]
+                                                $each: [{ 'notif': `${user.team.name} was register in tournament ${tournament.name}`, "time": new Date().toLocaleString(), }]
                                             }
                                         }
                                     }, { new: true })
@@ -293,7 +456,7 @@ class tournamenController {
                                     {
                                         $push: {
                                             notification: {
-                                                $each: [{ 'notif': `${user.team.name} was register in tournament ${tournament.name}`, "time": new Date().toLocaleString(), "tournament": urlID }]
+                                                $each: [{ 'notif': `${user.team.name} was register in tournament ${tournament.name}`, "time": new Date().toLocaleString(), }]
                                             }
                                         }
                                     }, { new: true })
@@ -327,6 +490,8 @@ class tournamenController {
                 if (found) {
                     const user1Update = await Tournament.findOne({ url: urlID, 'stage1.user1': null })
                     const user2Update = await Tournament.findOne({ url: urlID, 'stage1.user2': null })
+                    const s2User1 = await Tournament.findOne({ url: urlID, 'stage2.user1': null })
+                    const s2User2 = await Tournament.findOne({ url: urlID, 'stage2.user2': null })
                     if (user1Update) {
                         await Tournament.findOneAndUpdate({ url: urlID, 'stage1.user1': null },
                             {
@@ -339,27 +504,25 @@ class tournamenController {
                                 $set: { "stage1.$.user2": req.body.user }
                             }, { new: true })
                     }
-                    const dataTournament = await Tournament.findOneAndUpdate({ url: urlID },
-                        { $pull: { waitinglist: req.body.user }, $addToSet: { participant: req.body.user, userNow: req.body.user } },
-                        { new: true }
-                    )
-                    if (user.team.tournament == tournament.url) {
-                        await User.findOneAndUpdate({ _id: req.body.user },
-                            {
-                                $addToSet: {
-                                    listTournamentTeam: {
-                                        $each: [{ 'tournament': tournament._id }]
-                                    }
-                                }
-                            },
-                            { new: true }
-                        )
+                    else {
+                        if (s2User1) {
+                            await Tournament.findOneAndUpdate({ url: urlID, 'stage2.user1': null },
+                                {
+                                    $set: { "stage2.$.user1": req.body.user }
+                                }, { new: true })
+                        }
+                        else if (s2User2) {
+                            await Tournament.findOneAndUpdate({ url: urlID, 'stage2.user2': null },
+                                {
+                                    $set: { "stage2.$.user1": req.body.user }
+                                }, { new: true })
+                        }
                     }
                     await User.findOneAndUpdate({ _id: req.body.user },
                         {
                             $push: {
                                 notification: {
-                                    $each: [{ 'notif': `You was accept in tournament ${tournament.name} ,Good Luck!`, "time": new Date().toLocaleString(), "tournament": urlID }]
+                                    $each: [{ 'notif': `You was accept in tournament ${tournament.name} ,Good Luck!`, "time": new Date().toLocaleString(), }]
                                 }
                             }
                         },
@@ -371,7 +534,21 @@ class tournamenController {
                             { new: true }
                         )
                     }
-                    res.status(200).json({ success: true, data: dataTournament })
+
+                    if (tournament.format == 'team') {
+                        const dataTournament = await Tournament.findOneAndUpdate({ url: urlID },
+                            { $pull: { waitinglist: req.body.user }, $addToSet: { team: req.body.user } },
+                            { new: true }
+                        )
+                        res.status(200).json({ success: true, data: dataTournament })
+                    }
+                    else if (tournament.format == 'individual') {
+                        const dataTournament = await Tournament.findOneAndUpdate({ url: urlID },
+                            { $pull: { waitinglist: req.body.user }, $addToSet: { participant: req.body.user } },
+                            { new: true }
+                        )
+                        res.status(200).json({ success: true, data: dataTournament })
+                    }
                 }
                 else next({ name: 'USER_NOT_FOUND' })
             }
@@ -412,22 +589,6 @@ class tournamenController {
                                 $set: { "ffaStage1.$.user5": req.body.user }
                             }, { new: true })
                     }
-                    if (user.team.tournament == tournament.url) {
-                        await User.findOneAndUpdate({ _id: req.body.user },
-                            {
-                                $addToSet: {
-                                    listTournamentTeam: {
-                                        $each: [{ 'tournament': tournament._id }]
-                                    }
-                                }
-                            },
-                            { new: true }
-                        )
-                    }
-                    const dataTournament = await Tournament.findOneAndUpdate({ url: urlID },
-                        { $pull: { waitinglist: req.body.user }, $addToSet: { participant: req.body.user, userNow: req.body.user } },
-                        { new: true }
-                    )
                     await User.findOneAndUpdate({ _id: req.body.user },
                         {
                             $push: {
@@ -444,7 +605,20 @@ class tournamenController {
                             { new: true }
                         )
                     }
-                    res.status(200).json({ success: true, data: dataTournament })
+                    if (tournament.format == 'team') {
+                        const dataTournament = await Tournament.findOneAndUpdate({ url: urlID },
+                            { $pull: { waitinglist: req.body.user }, $addToSet: { team: req.body.user } },
+                            { new: true }
+                        )
+                        res.status(200).json({ success: true, data: dataTournament })
+                    }
+                    else if (tournament.format == 'individual') {
+                        const dataTournament = await Tournament.findOneAndUpdate({ url: urlID },
+                            { $pull: { waitinglist: req.body.user }, $addToSet: { participant: req.body.user } },
+                            { new: true }
+                        )
+                        res.status(200).json({ success: true, data: dataTournament })
+                    }
                 }
                 else next({ name: 'USER_NOT_FOUND' })
             }

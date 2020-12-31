@@ -23,13 +23,7 @@ const userSchema = new mongoose.Schema({
         phone : {type : String,default : null},
         member1 : {type : String, default : null},
         member2 : {type : String,default : null},
-        tournament : {type : String,default : null}
     },
-    listTournamentTeam : [{
-        _id : false,
-        tournament : { type: mongoose.Schema.Types.ObjectId, ref: 'Tournament'},
-    }
-    ],
     phone : {
         type : String,
         unique :  true,

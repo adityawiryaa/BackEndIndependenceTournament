@@ -85,6 +85,10 @@ module.exports = (err,req,res,next) => {
         code = 500;
         message = 'Tournament Already Finish'
         break
+        case 'TOURNAMENT_INCORRECT' : 
+        code = 500;
+        message = 'Tournament Participant must 4-100'
+        break
         case 'MATCH_FAILED' :
         code = 500;
         message = 'Match Not Found'
@@ -109,13 +113,9 @@ module.exports = (err,req,res,next) => {
         code = 500
         message = 'User already winner on this stage'
         break;
-        case 'FFA_NOT_VALID' :
+        case 'GROUP_REQUIRED' :
         code = 500;
-        message = 'Tournament type Free For All Not Valid,Max Participant Must 20 or 40'
-        break;
-        case 'SE_NOT_VALID' :
-        code = 500;
-        message = 'Tournament type Single Elimination Not Valid,Max Participant Must 4 or 8 or 16'
+        message = 'Fill User / Group , Max User in group is 10'
         break;
         case  'ERROR' :
         code = 500;

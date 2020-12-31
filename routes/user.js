@@ -23,4 +23,5 @@ dataUser.put('/update/data',authentication.userAuth,userController.updateUser)
 dataUser.get('/committe/list',authentication.headManAuth,userController.listCommitte)
 dataUser.delete('/delete/committe/:committeID',authentication.headManAuth,userController.deleteCommitte)
 dataUser.delete('/delete',authentication.userAuth,userController.deleteAccount)
+dataUser.get('/csv',authentication.headManAuth,userController.csvDownload)
 module.exports = dataUser

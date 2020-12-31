@@ -6,10 +6,11 @@ const tournamentSchema = new Schema({
     participant: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'User'}
     ],
-    url : {type : String,required :  "Url Tournament Required" },
-    userNow: [
-        { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    team: [
+        { type: mongoose.Schema.Types.ObjectId, ref: 'User'}
     ],
+    url : {type : String,required :  "Url Tournament Required" },
+    format : {type : String, required : 'Format Required'},
     district : {type : String},
     createBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     headman : { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -72,6 +73,24 @@ const tournamentSchema = new Schema({
             match: { type: String, default: null }
         }
     ],
+    stage6: [
+        {
+            user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
+            score1: { type: Number, default: null },
+            user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
+            score2: { type: Number, default: null },
+            match: { type: String, default: null }
+        }
+    ],
+    stage7: [
+        {
+            user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
+            score1: { type: Number, default: null },
+            user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
+            score2: { type: Number, default: null },
+            match: { type: String, default: null }
+        }
+    ],
     bronzeMatch: [
         {
             user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
@@ -91,40 +110,41 @@ const tournamentSchema = new Schema({
     ],
     ffaStage1: [
         {
-            user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null,autopopulate: true },
-            score1: { type: Number, default: null },
-            user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null,autopopulate: true },
-            score2: { type: Number, default: null },
-            user3: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true},
-            score3: { type: Number, default: null },
-            user4: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null,autopopulate: true },
-            score4: { type: Number, default: null },
-            user5: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null,autopopulate: true },
-            score5: { type: Number, default: null },
-            match: { type: String, default: null }
+        user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User',autopopulate: true },
+        user3: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user4: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true },
+        user5: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user6: { type: mongoose.Schema.Types.ObjectId, ref: 'User',autopopulate: true },
+        user7: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user8: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true },
+        user9: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user10: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true },
         }
     ],
     ffaStage2: [{
-        user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null,autopopulate: true },
-        score1: { type: Number, default: null },
-        user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true},
-        score2: { type: Number, default: null },
-        user3: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true},
-        score3: { type: Number, default: null },
-        user4: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
-        score4: { type: Number, default: null },
-        match: { type: String, default: null }
+        user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User',autopopulate: true },
+        user3: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user4: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true },
+        user5: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user6: { type: mongoose.Schema.Types.ObjectId, ref: 'User',autopopulate: true },
+        user7: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user8: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true },
+        user9: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user10: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true },
     }],
     ffaStage3: [{
-        user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true},
-        score1: { type: Number, default: null },
-        user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null,autopopulate: true },
-        score2: { type: Number, default: null },
-        user3: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true},
-        score3: { type: Number, default: null },
-        user4: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, autopopulate: true },
-        score4: { type: Number, default: null },
-        match: { type: String, default: null }
+        user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User',autopopulate: true },
+        user3: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user4: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true },
+        user5: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user6: { type: mongoose.Schema.Types.ObjectId, ref: 'User',autopopulate: true },
+        user7: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user8: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true },
+        user9: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true},
+        user10: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true },
     }],
 
     status: String

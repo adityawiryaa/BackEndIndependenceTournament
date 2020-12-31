@@ -2,6 +2,8 @@ const User = require('../models/UserData')
 const Address = require('../models/AdressData')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const Tournament = require('../models/TournamentData')
+
 
 module.exports = class userController {
 
@@ -29,18 +31,18 @@ module.exports = class userController {
         const user = await User.findOne({ email: email })
         const userPhone = await User.findOne({ phone: phone })
         const userUsername = await User.findOne({ username: username })
-        const addressExist = await Address.findOne({district : req.body.district})
+        const addressExist = await Address.findOne({ district: req.body.district })
         try {
             if (user) next({ name: 'ALREADY_EXIST' })
             else if (userPhone) next({ name: 'PHONE_EXIST' })
             else if (userUsername) next({ name: 'USERNAME_EXIST' })
-            else if( addressExist) next({ name : 'ADDRESS_EXIST'})
+            else if (addressExist) next({ name: 'ADDRESS_EXIST' })
             else {
                 const userData = new User({ email, password, username, role: 'headman', phone, age })
                 const salt = bcrypt.genSaltSync(10)
                 userData.password = bcrypt.hashSync(userData.password, salt)
                 await userData.save()
-                const address = new Address({ district: req.body.district, user: userData._id,province : 'Dki Jakarta',country : 'Indonesia' })
+                const address = new Address({ district: req.body.district, user: userData._id, province: 'Dki Jakarta', country: 'Indonesia' })
                 await address.save()
                 res.status(201).json({ success: true, data: userData })
             }
@@ -62,7 +64,7 @@ module.exports = class userController {
                 const salt = bcrypt.genSaltSync(10)
                 userData.password = bcrypt.hashSync(userData.password, salt)
                 await userData.save()
-                const address = await new Address({ district: addressData.district, user: userData._id,province : addressData.province,country : addressData.country })
+                const address = await new Address({ district: addressData.district, user: userData._id, province: addressData.province, country: addressData.country })
                 await address.save()
                 res.status(201).json({ success: true, data: userData })
             }
@@ -123,9 +125,9 @@ module.exports = class userController {
     }
     static async updateUser(req, res, next) {
         try {
-            const newAdress = { fullname : req.body.fullname }
+            const newAdress = { fullname: req.body.fullname }
             for (let key in newAdress) if (!newAdress[key]) delete newAdress[key]
-            const update = await User.findByIdAndUpdate(req.userID,newAdress, { new: true })
+            const update = await User.findByIdAndUpdate(req.userID, newAdress, { new: true })
             res.status(200).json({ success: true, data: update })
         }
         catch { next({ name: 'USER_NOT_FOUND' }) }
@@ -137,23 +139,40 @@ module.exports = class userController {
         }
         catch { next({ name: 'USER_NOT_FOUND' }) }
     }
-    static async deleteCommitte(req,res,next) {
-        const {committeID} = req.params
+    static async deleteCommitte(req, res, next) {
+        const { committeID } = req.params
         try {
-            const committe = await User.findOneAndDelete({createBy : req.userID, _id : committeID,role : 'committe'})
-            if(committe){
-            await Address.findOneAndDelete({user : committe})
-            res.status(200).json({success : true, msg : 'success delete committe'})
+            const committe = await User.findOneAndDelete({ createBy: req.userID, _id: committeID, role: 'committe' })
+            if (committe) {
+                await Address.findOneAndDelete({ user: committe })
+                res.status(200).json({ success: true, msg: 'success delete committe' })
             }
         }
         catch { next({ name: 'USER_NOT_FOUND' }) }
     }
-    static async deleteAccount(req,res,next){
-        try{
+    static async deleteAccount(req, res, next) {
+        try {
             await User.findByIdAndDelete(req.userID)
-            await Address.findOneAndDelete({user : req.userID})
-            res.status(200).json({success : true, msg : 'success delete account'})
+            await Address.findOneAndDelete({ user: req.userID })
+            res.status(200).json({ success: true, msg: 'success delete account' })
         }
         catch { next({ name: 'USER_NOT_FOUND' }) }
+    }
+    static async csvDownload(req, res, next) {
+        let data = []
+        let obj = {}
+        const tournament = await Tournament.find({ headman: req.userID }).populate('winner.first').populate('winner.second').populate('winner.third')
+        let winner = tournament.filter(elem => elem.winner[0].first != null)
+        for (let j = 0; j < winner.length; j++) {
+            obj = {
+                'name tournament': winner[j].name,
+                'first': winner[j].winner[0].first.username,
+                'second': winner[j].winner[0].second.username,
+                'third': winner[j].winner[0].third.username
+
+            }
+        }
+        data.push(obj)
+        res.status(200).json({success : true,data})
     }
 }

@@ -19,7 +19,7 @@ class matchController {
                         { new: true })
                     const match = await updateSore.stage1.find(element => element._id == matchID)
                     if (match.score1 > match.score2) {
-                        if (tournament.stage1.length == 2) {
+                        if (tournament.stage1.length == 2 && tournament.stage1.length == 4) {
                             if (bronze.user1 == null) {
                                 await Tournament.findOneAndUpdate({ url: urlID, 'bronzeMatch.user1': null },
                                     { $set: { 'bronzeMatch.$.user1': user2 } },
@@ -44,7 +44,7 @@ class matchController {
                         else next({ name: 'MATCH_FAILED' })
                     }
                     else if (match.score1 < match.score2) {
-                        if (tournament.stage1.length == 2) {
+                        if (tournament.stage1.length == 2 && tournament.stage1.length == 4) {
                             if (bronze.user1 == null) {
                                 await Tournament.findOneAndUpdate({ url: urlID, 'bronzeMatch.user1': null },
                                     { $set: { 'bronzeMatch.$.user1': user1 } },
@@ -98,7 +98,7 @@ class matchController {
                             if (tournament.stage2.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user1, "winner.$.second": user2, userNow: [] } }
+                                    { $set: { "winner.$.first": user1, "winner.$.second": user2,  } }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -133,7 +133,7 @@ class matchController {
                             if (tournament.stage2.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user2, "winner.$.second": user1, userNow: [] } }
+                                    { $set: { "winner.$.first": user2, "winner.$.second": user1,  } }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -185,7 +185,6 @@ class matchController {
         const champion = tournament.winner.find(element => element);
 
         try {
-
             if (champion == undefined || champion.first == null && champion.second == null) {
                 if (tournament.createBy == req.userID) {
                     if (!stage4User1 && !stage4User2) {
@@ -197,7 +196,7 @@ class matchController {
                             if (tournament.stage3.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user1, "winner.$.second": user2, userNow: [] }, }
+                                    { $set: { "winner.$.first": user1, "winner.$.second": user2,  }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -225,14 +224,13 @@ class matchController {
                                     res.status(200).json({ success: true, data: result })
                                 }
                                 else next({ name: 'MATCH_FAILED' })
-
                             }
                         }
                         else if (match.score1 < match.score2) {
                             if (tournament.stage3.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user2, "winner.$.second": user1, userNow: [] }, }
+                                    { $set: { "winner.$.first": user2, "winner.$.second": user1,  }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -295,7 +293,7 @@ class matchController {
                             if (tournament.stage4.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user1, "winner.$.second": user2, userNow: [] }, }
+                                    { $set: { "winner.$.first": user1, "winner.$.second": user2,  }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -330,7 +328,7 @@ class matchController {
                             if (tournament.stage4.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user2, "winner.$.second": user1, userNow: [] }, }
+                                    { $set: { "winner.$.first": user2, "winner.$.second": user1,  }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -410,407 +408,6 @@ class matchController {
         }
         catch { next({ name: 'MATCH_FAILED' }) }
 
-    }
-    static async match1Ffa(req, res, next) {
-        const { user1, user2, user3, user4, user5, score1, score2, score3, score4, score5, matchID } = req.body
-        const { urlID } = req.params
-        const tournament = await Tournament.findOne({ url: urlID })
-        const stage1Match = await tournament.ffaStage1.find(element => element._id == matchID)
-        const stage2User1 = await tournament.ffaStage2.find(element => element.user1)
-        const stage2User2 = await tournament.ffaStage2.find(element => element.user2)
-        const stage2User3 = await tournament.ffaStage2.find(element => element.user3)
-        const stage2User4 = await tournament.ffaStage2.find(element => element.user4)
-        try {
-            if (tournament.createBy == req.userID) {
-                if (!stage2User1 || !stage2User2 || !stage2User3 || !stage2User4) {
-                    if (stage1Match) {
-                        const updateMatch = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage1._id': matchID }, { $set: { 'ffaStage1.$.score1': score1, 'ffaStage1.$.score2': score2, 'ffaStage1.$.score3': score3, 'ffaStage1.$.score4': score4, 'ffaStage1.$.score5': score5 } }, { new: true })
-                        const updateScore = await updateMatch.ffaStage1.find(element => element._id == matchID)
-                        const user1Null = await Tournament.findOne({ url: urlID, 'ffaStage2.user1': null })
-                        const user2Null = await Tournament.findOne({ url: urlID, 'ffaStage2.user2': null })
-                        const user3Null = await Tournament.findOne({ url: urlID, 'ffaStage2.user3': null })
-                        const user4Null = await Tournament.findOne({ url: urlID, 'ffaStage2.user4': null })
-                        if (updateScore.score1 > updateScore.score2 && updateScore.score1 > updateScore.score3 && updateScore.score1 > updateScore.score4 && updateScore.score1 > updateScore.score5) {
-                            if (user1Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user1': null }, { $set: { 'ffaStage2.$.user1': user1 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user2Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user2': null }, { $set: { 'ffaStage2.$.user2': user1 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user3Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user3': null }, { $set: { 'ffaStage2.$.user3': user1 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user4Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user4': null }, { $set: { 'ffaStage2.$.user4': user1 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else next({ name: 'TOURNAMENT_FAILED' })
-                        }
-                        else if (updateScore.score2 > updateScore.score1 && updateScore.score2 > updateScore.score3 && updateScore.score2 > updateScore.score4 && updateScore.score2 > updateScore.score5) {
-                            if (user1Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user1': null }, { $set: { 'ffaStage2.$.user1': user2 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user2Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user2': null }, { $set: { 'ffaStage2.$.user2': user2 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user3Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user3': null }, { $set: { 'ffaStage2.$.user3': user2 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user4Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user4': null }, { $set: { 'ffaStage2.$.user4': user2 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else next({ name: 'TOURNAMENT_FAILED' })
-                        }
-                        else if (updateScore.score3 > updateScore.score1 && updateScore.score3 > updateScore.score2 && updateScore.score3 > updateScore.score4 && updateScore.score3 > updateScore.score5) {
-                            if (user1Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user1': null }, { $set: { 'ffaStage2.$.user1': user3 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user2Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user2': null }, { $set: { 'ffaStage2.$.user2': user3 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user3Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user3': null }, { $set: { 'ffaStage2.$.user3': user3 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user4Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user4': null }, { $set: { 'ffaStage2.$.user4': user3 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else next({ name: 'TOURNAMENT_FAILED' })
-
-                        }
-                        else if (updateScore.score4 > updateScore.score1 && updateScore.score4 > updateScore.score2 && updateScore.score4 > updateScore.score3 && updateScore.score4 > updateScore.score5) {
-                            if (user1Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user1': null }, { $set: { 'ffaStage2.$.user1': user4 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user2Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user2': null }, { $set: { 'ffaStage2.$.user2': user4 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user3Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user3': null }, { $set: { 'ffaStage2.$.user3': user4 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user4Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user4': null }, { $set: { 'ffaStage2.$.user4': user4 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else next({ name: 'TOURNAMENT_FAILED' })
-                        }
-                        else if (updateScore.score5 > updateScore.score1 && updateScore.score5 > updateScore.score2 && updateScore.score5 > updateScore.score3 && updateScore.score5 > updateScore.score4) {
-                            if (user1Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user1': null }, { $set: { 'ffaStage2.$.user1': user5 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user2Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user2': null }, { $set: { 'ffaStage2.$.user2': user5 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user3Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user3': null }, { $set: { 'ffaStage2.$.user3': user5 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else if (user4Null) {
-                                const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2.user4': null }, { $set: { 'ffaStage2.$.user4': user5 } }, { new: true })
-                                res.status(200).json({ success: true, data: bracket })
-                            }
-                            else next({ name: 'TOURNAMENT_FAILED' })
-                        }
-                        else next({ name: 'MATCH_FAILED' })
-                    }
-                    else next({ name: 'MATCH_FAILED' })
-                }
-                else next({ name: 'USER_WINNER' })
-            }
-            else next({ name: 'NOT_ACCESS' })
-        }
-        catch { next({ name: 'TOURNAMENT_FAILED' }) }
-    }
-    static async match2Ffa(req, res, next) {
-        const { user1, user2, user3, user4, score1, score2, score3, score4, matchID } = req.body
-        const { urlID } = req.params
-        const tournament = await Tournament.findOne({ url: urlID })
-        const champion = await tournament.winner.find(element => element)
-        const stage2Match = await tournament.ffaStage2.find(element => element._id == matchID)
-        const stage3User1 = await tournament.ffaStage3.find(element => element.user1)
-        const stage3User2 = await tournament.ffaStage3.find(element => element.user2)
-        const stage3User3 = await tournament.ffaStage3.find(element => element.user3)
-        const stage3User4 = await tournament.ffaStage3.find(element => element.user4)
-        try {
-            if (tournament.createBy == req.userID) {
-                if (!stage3User1 && !stage3User2 && !stage3User3 && !stage3User4 && champion.first == null) {
-                    if (stage2Match) {
-                        const updateMatch = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage2._id': matchID }, { $set: { 'ffaStage2.$.score1': score1, 'ffaStage2.$.score2': score2, 'ffaStage2.$.score3': score3, 'ffaStage2.$.score4': score4 } }, { new: true })
-                        const updateScore = await updateMatch.ffaStage2.find(element => element._id == matchID)
-                        if (updateMatch.ffaStage2.length == 1) {
-                            if (updateScore.score1 > updateScore.score2 && updateScore.score1 > updateScore.score3 && updateScore.score1 > updateScore.score4 && updateScore.score1) {
-                                await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
-                                const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null },
-                                    { $set: { "winner.$.first": user1, userNow: [] }, }
-                                    , { new: true })
-                                res.status(200).json({ success: true, data: final })
-                            } else if (updateScore.score2 > updateScore.score1 && updateScore.score2 > updateScore.score3 && updateScore.score2 > updateScore.score4 && updateScore.score2) {
-                                await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
-                                const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null },
-                                    { $set: { "winner.$.first": user2, userNow: [] }, }
-                                    , { new: true })
-                                res.status(200).json({ success: true, data: final })
-                            } else if (updateScore.score3 > updateScore.score1 && updateScore.score3 > updateScore.score2 && updateScore.score3 > updateScore.score4 && updateScore.score3) {
-                                await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
-                                const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null },
-                                    { $set: { "winner.$.first": user3, userNow: [] }, }
-                                    , { new: true })
-                                res.status(200).json({ success: true, data: final })
-                            }
-                            else if (updateScore.score4 > updateScore.score1 && updateScore.score4 > updateScore.score2 && updateScore.score4 > updateScore.score3 && updateScore.score4) {
-                                await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
-                                const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null },
-                                    { $set: { "winner.$.first": user4, userNow: [] }, }
-                                    , { new: true })
-                                res.status(200).json({ success: true, data: final })
-                            }
-                            else next({ name: 'MATCH_FAILED' })
-                        }
-                        else {
-                            const user1Null = await Tournament.findOne({ url: urlID, 'ffaStage3.user1': null })
-                            const user2Null = await Tournament.findOne({ url: urlID, 'ffaStage3.user2': null })
-                            const user3Null = await Tournament.findOne({ url: urlID, 'ffaStage3.user3': null })
-                            const user4Null = await Tournament.findOne({ url: urlID, 'ffaStage3.user4': null })
-                            if (updateScore.score1 > updateScore.score2 && updateScore.score1 > updateScore.score3 && updateScore.score1 > updateScore.score4 && updateScore.score1) {
-                                if (user1Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user1': null }, { $set: { 'ffaStage3.$.user1': user1 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user2Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user2': null }, { $set: { 'ffaStage3.$.user2': user1 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user3Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user3': null }, { $set: { 'ffaStage3.$.user3': user1 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user4Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user4': null }, { $set: { 'ffaStage3.$.user4': user1 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else next({ name: 'TOURNAMENT_FAILED' })
-                            }
-                            else if (updateScore.score2 > updateScore.score1 && updateScore.score2 > updateScore.score3 && updateScore.score2 > updateScore.score4 && updateScore.score2) {
-                                if (user1Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user1': null }, { $set: { 'ffaStage3.$.user1': user2 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user2Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user2': null }, { $set: { 'ffaStage3.$.user2': user2 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user3Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user3': null }, { $set: { 'ffaStage3.$.user3': user2 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user4Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user4': null }, { $set: { 'ffaStage3.$.user4': user2 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else next({ name: 'TOURNAMENT_FAILED' })
-                            }
-                            else if (updateScore.score3 > updateScore.score1 && updateScore.score3 > updateScore.score2 && updateScore.score3 > updateScore.score4 && updateScore.score3) {
-                                if (user1Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user1': null }, { $set: { 'ffaStage3.$.user1': user3 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user2Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user2': null }, { $set: { 'ffaStage3.$.user2': user3 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user3Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user3': null }, { $set: { 'ffaStage3.$.user3': user3 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user4Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user4': null }, { $set: { 'ffaStage3.$.user4': user3 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else next({ name: 'TOURNAMENT_FAILED' })
-
-                            }
-                            else if (updateScore.score4 > updateScore.score1 && updateScore.score4 > updateScore.score2 && updateScore.score4 > updateScore.score3 && updateScore.score4) {
-                                if (user1Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user1': null }, { $set: { 'ffaStage3.$.user1': user4 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user2Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user2': null }, { $set: { 'ffaStage3.$.user2': user4 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user3Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user3': null }, { $set: { 'ffaStage3.$.user3': user4 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user4Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3.user4': null }, { $set: { 'ffaStage3.$.user4': user4 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else next({ name: 'TOURNAMENT_FAILED' })
-                            }
-                            else next({ name: 'MATCH_FAILED' })
-                        }
-                    }
-                    else next({ name: 'MATCH_FAILED' })
-                }
-                else next({ name: 'USER_WINNER' })
-            }
-            else next({ name: 'NOT_ACCESS' })
-        }
-        catch { next({ name: 'TOURNAMENT_FAILED' }) }
-    }
-    static async match3Ffa(req, res, next) {
-        const { user1, user2, user3, user4, score1, score2, score3, score4, matchID } = req.body
-        const { urlID } = req.params
-        const tournament = await Tournament.findOne({ url: urlID })
-        const stage3Match = await tournament.ffaStage3.find(element => element._id == matchID)
-        const champion = await tournament.winner.find(element => element)
-        const stage4User1 = await tournament.ffaStage4.find(element => element.user1 == user1 || element.user2 == user1 || element.user3 == user1 || element.user4 == user1)
-        const stage4User2 = await tournament.ffaStage4.find(element => element.user1 == user2 || element.user2 == user2 || element.user3 == user2 || element.user4 == user2)
-        const stage4User3 = await tournament.ffaStage4.find(element => element.user1 == user3 || element.user2 == user3 || element.user3 == user3 || element.user4 == user3)
-        const stage4User4 = await tournament.ffaStage4.find(element => element.user1 == user4 || element.user2 == user4 || element.user3 == user4 || element.user4 == user4)
-        try {
-            if (tournament.createBy == req.userID) {
-                if (!stage4User1 && !stage4User2 && !stage4User3 && !stage4User4 && champion.first == null) {
-                    if (stage3Match) {
-                        const updateMatch = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage3._id': matchID }, { $set: { 'ffaStage3.$.score1': score1, 'ffaStage3.$.score2': score2, 'ffaStage3.$.score3': score3, 'ffaStage3.$.score4': score4 } }, { new: true })
-                        const updateScore = await updateMatch.ffaStage2.find(element => element._id == matchID)
-                        if (updateMatch.ffaStage3.length == 1) {
-                            if (updateScore.score1 > updateScore.score2 && updateScore.score1 > updateScore.score3 && updateScore.score1 > updateScore.score4 && updateScore.score1) {
-                                await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
-                                const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null },
-                                    { $set: { "winner.$.first": user1, userNow: [] }, }
-                                    , { new: true })
-                                res.status(200).json({ success: true, data: final })
-                            } else if (updateScore.score2 > updateScore.score1 && updateScore.score2 > updateScore.score3 && updateScore.score2 > updateScore.score4 && updateScore.score2) {
-                                await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
-                                const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null },
-                                    { $set: { "winner.$.first": user2, userNow: [] }, }
-                                    , { new: true })
-                                res.status(200).json({ success: true, data: final })
-                            } else if (updateScore.score3 > updateScore.score1 && updateScore.score3 > updateScore.score2 && updateScore.score3 > updateScore.score4 && updateScore.score3) {
-                                await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
-                                const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null },
-                                    { $set: { "winner.$.first": user3, userNow: [] }, }
-                                    , { new: true })
-                                res.status(200).json({ success: true, data: final })
-                            }
-                            else if (updateScore.score4 > updateScore.score1 && updateScore.score4 > updateScore.score2 && updateScore.score4 > updateScore.score3 && updateScore.score4) {
-                                await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
-                                const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null },
-                                    { $set: { "winner.$.first": user4, userNow: [] }, }
-                                    , { new: true })
-                                res.status(200).json({ success: true, data: final })
-                            }
-                            else next({ name: 'MATCH_FAILED' })
-                        }
-                        else {
-                            const user1Null = await Tournament.findOne({ url: urlID, 'ffaStage4.user1': null })
-                            const user2Null = await Tournament.findOne({ url: urlID, 'ffaStage4.user2': null })
-                            const user3Null = await Tournament.findOne({ url: urlID, 'ffaStage4.user3': null })
-                            const user4Null = await Tournament.findOne({ url: urlID, 'ffaStage4.user4': null })
-                            if (updateScore.score1 > updateScore.score2 && updateScore.score1 > updateScore.score3 && updateScore.score1 > updateScore.score4 && updateScore.score1) {
-                                if (user1Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user1': null }, { $set: { 'ffaStage4.$.user1': user1 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user2Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user2': null }, { $set: { 'ffaStage4.$.user2': user1 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user3Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user3': null }, { $set: { 'ffaStage4.$.user3': user1 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user4Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user4': null }, { $set: { 'ffaStage4.$.user4': user1 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else next({ name: 'TOURNAMENT_FAILED' })
-                            }
-                            else if (updateScore.score2 > updateScore.score1 && updateScore.score2 > updateScore.score3 && updateScore.score2 > updateScore.score4 && updateScore.score2) {
-                                if (user1Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user1': null }, { $set: { 'ffaStage4.$.user1': user2 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user2Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user2': null }, { $set: { 'ffaStage4.$.user2': user2 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user3Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user3': null }, { $set: { 'ffaStage4.$.user3': user2 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user4Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user4': null }, { $set: { 'ffaStage4.$.user4': user2 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else next({ name: 'TOURNAMENT_FAILED' })
-                            }
-                            else if (updateScore.score3 > updateScore.score1 && updateScore.score3 > updateScore.score2 && updateScore.score3 > updateScore.score4 && updateScore.score3) {
-                                if (user1Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user1': null }, { $set: { 'ffaStage4.$.user1': user3 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user2Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user2': null }, { $set: { 'ffaStage4.$.user2': user3 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user3Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user3': null }, { $set: { 'ffaStage4.$.user3': user3 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user4Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user4': null }, { $set: { 'ffaStage4.$.user4': user3 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else next({ name: 'TOURNAMENT_FAILED' })
-
-                            }
-                            else if (updateScore.score4 > updateScore.score1 && updateScore.score4 > updateScore.score2 && updateScore.score4 > updateScore.score3 && updateScore.score4) {
-                                if (user1Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user1': null }, { $set: { 'ffaStage4.$.user1': user4 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user2Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user2': null }, { $set: { 'ffaStage4.$.user2': user4 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user3Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user3': null }, { $set: { 'ffaStage4.$.user3': user4 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else if (user4Null) {
-                                    const bracket = await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage4.user4': null }, { $set: { 'ffaStage4.$.user4': user4 } }, { new: true })
-                                    res.status(200).json({ success: true, data: bracket })
-                                }
-                                else next({ name: 'TOURNAMENT_FAILED' })
-                            }
-                            else next({ name: 'MATCH_FAILED' })
-                        }
-                    }
-                    else next({ name: 'MATCH_FAILED' })
-                }
-                else next({ name: 'USER_WINNER' })
-            }
-            else next({ name: 'NOT_ACCESS' })
-        }
-        catch { next({ name: 'TOURNAMENT_FAILED' }) }
     }
 }
 
