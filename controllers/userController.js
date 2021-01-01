@@ -161,7 +161,7 @@ module.exports = class userController {
     static async csvDownload(req, res, next) {
         let data = []
         let obj = {}
-        const tournament = await Tournament.find({ headman: req.userID }).populate('winner.first').populate('winner.second').populate('winner.third')
+        const tournament = await Tournament.find({ headman: req.userID },{},{ autopopulate: false }).populate('winner.first').populate('winner.second').populate('winner.third')
         let winner = tournament.filter(elem => elem.winner[0].first != null)
         for (let j = 0; j < winner.length; j++) {
             obj = {

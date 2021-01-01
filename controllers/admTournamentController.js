@@ -88,16 +88,16 @@ class tournamenController {
                         for (let z = 1; z <= req.body.maxuser % 32; z++) {
                             sisa.push({ match: z })
                         }
-                        for (let a = 2; a <= 16; a = a + 2) {
+                        for (let a = 2; a <= 32; a = a + 2) {
                             s1.push({ match: a })
                         }
-                        for (let b = 4; b <= 16; b = b + 4) {
+                        for (let b = 4; b <= 32; b = b + 4) {
                             s2.push({ match: b })
                         }
-                        for (let c = 8; c <= 16; c = c + 8) {
+                        for (let c = 8; c <= 32; c = c + 8) {
                             s3.push({ match: c })
                         }
-                        for (let d = 16; d <= 16; d = d + 16) {
+                        for (let d = 16; d <= 32; d = d + 16) {
                             s4.push({ match: d })
                         }
                         for (let e = 32; e <= 32; e = e + 32) {
@@ -108,19 +108,19 @@ class tournamenController {
                         for (let z = 1; z <= req.body.maxuser % 64; z++) {
                             sisa.push({ match: z })
                         }
-                        for (let a = 2; a <= 16; a = a + 2) {
+                        for (let a = 2; a <= 64; a = a + 2) {
                             s1.push({ match: a })
                         }
-                        for (let b = 4; b <= 16; b = b + 4) {
+                        for (let b = 4; b <= 64; b = b + 4) {
                             s2.push({ match: b })
                         }
-                        for (let c = 8; c <= 16; c = c + 8) {
+                        for (let c = 8; c <= 64; c = c + 8) {
                             s3.push({ match: c })
                         }
-                        for (let d = 16; d <= 16; d = d + 16) {
+                        for (let d = 16; d <= 64; d = d + 16) {
                             s4.push({ match: d })
                         }
-                        for (let e = 32; e <= 32; e = e + 32) {
+                        for (let e = 32; e <= 64; e = e + 32) {
                             s5.push({ match: e })
                         }
                         for (let f = 64; f <= 64; f = f + 64) {
@@ -313,21 +313,21 @@ class tournamenController {
     }
     static async tournamentBaseOnHeadman(req, res, next) {
         try {
-            const tournament = await Tournament.find({ headman: req.userID })
+            const tournament = await Tournament.find({ headman: req.userID },{},{ autopopulate: false })
             res.status(200).json({ success: true, data: tournament })
         }
         catch { next({ name: "TOURNAMENT_FAILED" }) }
     }
     static async tournamentByCommitte(req, res, next) {
         try {
-            const tournament = await Tournament.find({ createBy: req.userID })
+            const tournament = await Tournament.find({ createBy: req.userID },{},{ autopopulate: false })
             res.status(200).json({ success: true, data: tournament })
         }
         catch { next({ name: "TOURNAMENT_FAILED" }) }
     }
     static async myTournament(req, res, next) {
         try {
-            const tournament = await Tournament.find({ $or: [{ participant: req.userID }, { team: req.userID }] })
+            const tournament = await Tournament.find({ $or: [{ participant: req.userID }, { team: req.userID }] },{},{ autopopulate: false })
             res.status(200).json({ success: true, data: tournament })
         }
         catch { next({ name: "TOURNAMENT_FAILED" }) }
@@ -559,6 +559,11 @@ class tournamenController {
                     const user3Update = await Tournament.findOne({ url: urlID, 'ffaStage1.user3': null })
                     const user4Update = await Tournament.findOne({ url: urlID, 'ffaStage1.user4': null })
                     const user5Update = await Tournament.findOne({ url: urlID, 'ffaStage1.user5': null })
+                    const user6Update = await Tournament.findOne({ url: urlID, 'ffaStage1.user6': null })
+                    const user7Update = await Tournament.findOne({ url: urlID, 'ffaStage1.user7': null })
+                    const user8Update = await Tournament.findOne({ url: urlID, 'ffaStage1.user8': null })
+                    const user9Update = await Tournament.findOne({ url: urlID, 'ffaStage1.user9': null })
+                    const user10Update = await Tournament.findOne({ url: urlID, 'ffaStage1.user10': null })
                     if (user1Update) {
                         await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage1.user1': null },
                             {
@@ -587,6 +592,36 @@ class tournamenController {
                         await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage1.user5': null },
                             {
                                 $set: { "ffaStage1.$.user5": req.body.user }
+                            }, { new: true })
+                    }
+                    else if (user6Update) {
+                        await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage1.user6': null },
+                            {
+                                $set: { "ffaStage1.$.user6": req.body.user }
+                            }, { new: true })
+                    }
+                    else if (user7Update) {
+                        await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage1.user7': null },
+                            {
+                                $set: { "ffaStage1.$.user7": req.body.user }
+                            }, { new: true })
+                    }
+                    else if (user8Update) {
+                        await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage1.user8': null },
+                            {
+                                $set: { "ffaStage1.$.user8": req.body.user }
+                            }, { new: true })
+                    }
+                    else if (user9Update) {
+                        await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage1.user9': null },
+                            {
+                                $set: { "ffaStage1.$.user9": req.body.user }
+                            }, { new: true })
+                    }
+                    else if (user10Update) {
+                        await Tournament.findOneAndUpdate({ url: urlID, 'ffaStage1.user10': null },
+                            {
+                                $set: { "ffaStage1.$.user10": req.body.user }
                             }, { new: true })
                     }
                     await User.findOneAndUpdate({ _id: req.body.user },
@@ -703,11 +738,17 @@ class tournamenController {
                 const matchStage2 = tournament.stage2.find(elem => elem._id == matchID)
                 const matchStage3 = tournament.stage3.find(elem => elem._id == matchID)
                 const matchStage4 = tournament.stage4.find(elem => elem._id == matchID)
+                const matchStage5 = tournament.stage5.find(elem => elem._id == matchID)
+                const matchStage6 = tournament.stage6.find(elem => elem._id == matchID)
+                const matchStage7 = tournament.stage7.find(elem => elem._id == matchID)
                 const bronzeMatch = tournament.bronzeMatch.find(elem => elem._id == matchID)
                 if (matchStage1) res.status(200).json({ success: true, data: matchStage1 })
                 else if (matchStage2) res.status(200).json({ success: true, data: matchStage2 })
                 else if (matchStage3) res.status(200).json({ success: true, data: matchStage3 })
                 else if (matchStage4) res.status(200).json({ success: true, data: matchStage4 })
+                else if (matchStage5) res.status(200).json({ success: true, data: matchStage5 })
+                else if (matchStage6) res.status(200).json({ success: true, data: matchStage6 })
+                else if (matchStage7) res.status(200).json({ success: true, data: matchStage7 })
                 else if (bronzeMatch) res.status(200).json({ success: true, data: bronzeMatch })
                 else next({ name: 'MATCH_FAILED' })
             }
