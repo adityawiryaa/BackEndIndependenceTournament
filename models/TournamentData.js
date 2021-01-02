@@ -18,8 +18,8 @@ const tournamentSchema = new Schema({
     type: { type: String, required: "Type Tournament Required" },
     prize: {
         first: { type: String, required: "Prize First Required" },
-        second: { type: String, required: "Prize Second Required" },
-        third: { type: String, required: "Prize Third Required" }
+        second: { type: String },
+        third: { type: String}
     },
     age: { type: Number, default: 'all' },
     game: { type: mongoose.Schema.Types.ObjectId, ref: 'Game', required: "Game Required"},

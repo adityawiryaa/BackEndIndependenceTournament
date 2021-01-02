@@ -23,6 +23,8 @@ dataTournament.put('/match5/:urlID',authentication.committeAuth,matchController.
 dataTournament.put('/match6/:urlID',authentication.committeAuth,matchController.match6)
 dataTournament.put('/match7/:urlID',authentication.committeAuth,matchController.match7)
 dataTournament.put('/ffa/match1/:urlID',authentication.committeAuth,matchController.ffaMatch1)
+dataTournament.put('/ffa/match2/:urlID',authentication.committeAuth,matchController.ffaMatch2)
+dataTournament.put('/ffa/match3/:urlID',authentication.committeAuth,matchController.ffaMatch3)
 dataTournament.put('/bronzeMatch/:urlID',authentication.committeAuth,matchController.bronzeMatch)
 dataTournament.get('/committe/list',authentication.committeAuth,admTournamentController.tournamentByCommitte)
 dataTournament.get('/headman/list',authentication.headManAuth,admTournamentController.tournamentBaseOnHeadman)

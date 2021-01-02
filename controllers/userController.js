@@ -161,18 +161,71 @@ module.exports = class userController {
     static async csvDownload(req, res, next) {
         let data = []
         let obj = {}
-        const tournament = await Tournament.find({ headman: req.userID },{},{ autopopulate: false }).populate('winner.first').populate('winner.second').populate('winner.third')
-        let winner = tournament.filter(elem => elem.winner[0].first != null)
-        for (let j = 0; j < winner.length; j++) {
-            obj = {
-                'name tournament': winner[j].name,
-                'first': winner[j].winner[0].first.username,
-                'second': winner[j].winner[0].second.username,
-                'third': winner[j].winner[0].third.username
+        const tournament = await Tournament.find({ headman: req.userID, status: 'complete' }, {}, { autopopulate: false }).populate('winner.first').populate('winner.second').populate('winner.third')
+        for (let j = 0; j < tournament.length; j++) {
 
+            if (tournament[j].winner[0].first && tournament[j].winner[0].second && tournament[j].winner[0].third) {
+                if (tournament[j].format == "team") {
+                    obj = {
+                        'name tournament': tournament[j].name,
+                        'type tournament' : tournament[j].type,
+                        'format tournament' : tournament[j].format,
+                        'first': tournament[j].winner[0].first.team.name,
+                        'second': tournament[j].winner[0].second.team.name,
+                        'third': tournament[j].winner[0].third.team.name
+                    }
+                }
+                else {
+                    obj = {
+                        'name tournament': tournament[j].name,
+                        'type tournament' : tournament[j].type,
+                        'format tournament' : tournament[j].format,
+                        'first': tournament[j].winner[0].first.username,
+                        'second': tournament[j].winner[0].second.username,
+                        'third': tournament[j].winner[0].third.username
+                    }
+                }
+            }
+            else if (tournament[j].winner[0].first && tournament[j].winner[0].second) {
+                if (tournament[j].format == "team") {
+                    obj = {
+                        'name tournament': tournament[j].name,
+                        'type tournament' : tournament[j].type,
+                        'format tournament' : tournament[j].format,
+                        'first': tournament[j].winner[0].first.team.name,
+                        'second': tournament[j].winner[0].second.team.name,
+                    }
+                }
+                else {
+                    obj = {
+                        'name tournament': tournament[j].name,
+                        'type tournament' : tournament[j].type,
+                        'format tournament' : tournament[j].format,
+                        'first': tournament[j].winner[0].first.username,
+                        'second': tournament[j].winner[0].second.username,
+                    }
+                }
+            }
+            else if (tournament[j].winner[0].first) {
+                if (tournament[j].format == "team") {
+                    obj = {
+                        'name tournament': tournament[j].name,
+                        'type tournament' : tournament[j].type,
+                        'format tournament' : tournament[j].format,
+                        'first': tournament[j].winner[0].first.team.name,
+                    }
+                }
+                else {
+                    obj = {
+                        'name tournament': tournament[j].name,
+                        'type tournament' : tournament[j].type,
+                        'format tournament' : tournament[j].format,
+                        'first': tournament[j].winner[0].first.username
+                    }
+                }
             }
         }
         data.push(obj)
-        res.status(200).json({success : true,data})
+        res.status(200).json({ success: true, data })
     }
 }
