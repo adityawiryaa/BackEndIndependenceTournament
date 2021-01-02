@@ -1,10 +1,13 @@
 const Tournament = require('../models/TournamentData')
-const User = require('../models/UserData')
-const Address = require('../models/AdressData')
 
 class matchController {
     static async match1(req, res, next) {
         const { user1, user2, score1, score2, matchID } = req.body
+        console.log(user1)
+        console.log(user2)
+        console.log(score1)
+        console.log(score2)
+        console.log(matchID)
         const { urlID } = req.params
         const tournament = await Tournament.findOne({ url: urlID })
         const seStage2 = await Tournament.findOne({ url: urlID }, {}, { autopopulate: false })
@@ -14,7 +17,9 @@ class matchController {
         const bronze = await seStage2.bronzeMatch.find(element => element)
         try {
             if (tournament.createBy == req.userID) {
+                console.log('sum')
                 if (!stage2User1 && !stage2User2) {
+                    console.log('sums')
                     const updateSore = await Tournament.findOneAndUpdate({ 'stage1._id': matchID, url: urlID },
                         { $set: { 'stage1.$.score1': score1, 'stage1.$.score2': score2 } },
                         { new: true })
