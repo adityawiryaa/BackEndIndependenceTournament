@@ -125,9 +125,9 @@ module.exports = class userController {
     }
     static async updateUser(req, res, next) {
         try {
-            const newAdress = { fullname: req.body.fullname }
-            for (let key in newAdress) if (!newAdress[key]) delete newAdress[key]
-            const update = await User.findByIdAndUpdate(req.userID, newAdress, { new: true })
+            const dataUser = { fullname: req.body.fullname }
+            for (let key in dataUser) if (!dataUser[key]) delete dataUser[key]
+            const update = await User.findByIdAndUpdate(req.userID, dataUser, { new: true })
             res.status(200).json({ success: true, data: update })
         }
         catch { next({ name: 'USER_NOT_FOUND' }) }
