@@ -351,7 +351,7 @@ class tournamenController {
     }
     static async updateTournament(req, res, next) {
         const { urlID } = req.params
-        const dataTournament = Tournament.findOne({ createBy: req.userID, url: urlID })
+        const dataTournament = Tournament.findOne({ createBy: req.userID, url: urlID },{},{autopopulate : false})
         try {
             if (dataTournament) {
                 const tournament = await Tournament.findOneAndUpdate({ url: urlID },
@@ -366,7 +366,7 @@ class tournamenController {
     static async deleteTournament(req, res, next) {
         const { tournamentID } = req.params
         try {
-            const tournament = await Tournament.findOneAndDelete({ createBy: req.userID, _id: tournamentID })
+            const tournament = await Tournament.findOneAndDelete({ createBy: req.userID, _id: tournamentID },{},{autopopulate : false})
             res.status(200).json({ success: true, message: 'Delete tournament success' })
         }
         catch { next({ name: 'TOURNAMENT_FAILED' }) }
@@ -374,10 +374,10 @@ class tournamenController {
     static async registerTournament(req, res, next) {
         const { urlID } = req.params
         const user = await User.findById(req.userID)
-        const tournament = await Tournament.findOne({ url: urlID })
+        const tournament = await Tournament.findOne({ url: urlID },{},{autopopulate : false})
         const idCommitte = tournament.createBy
         const committeData = await User.findById(idCommitte)
-        const userTournamentExist = await Tournament.findOne({ $or: [{ team: req.userID }, { participant: req.userID }, { waitinglist: req.userID }] })
+        const userTournamentExist = await Tournament.findOne({ $or: [{ team: req.userID }, { participant: req.userID }, { waitinglist: req.userID }] },{},{autopopulate : false})
         const totalWaiting = tournament.participant.length + tournament.waitinglist.length
         try {
             if (user.age >= tournament.age || tournament.age == '' || tournament.age == null || tournament.age == 0) {
@@ -385,12 +385,11 @@ class tournamenController {
                     if (user.role == 'user') {
                         if (userTournamentExist) next({ name: 'USER_EXIST' })
                         else {
-                            await User.findByIdAndUpdate(req.userID, { $set: { 'team.tournament': null } }, { new: true })
                             await User.findOneAndUpdate({ _id: idCommitte },
                                 {
                                     $push: {
                                         notification: {
-                                            $each: [{ 'notif': `${user.username} was register in tournament ${tournament.name}`, "time": new Date().toLocaleString(), }]
+                                            $each: [{ 'notif': `${user.username} was register in tournament ${tournament.url}`, "time": new Date().toLocaleString(), }]
                                         }
                                     }
                                 }, { new: true })
@@ -417,10 +416,10 @@ class tournamenController {
         const { urlID } = req.params
         const { name, phone, member1, member2 } = req.body
         const user = await User.findById(req.userID)
-        const tournament = await Tournament.findOne({ url: urlID })
+        const tournament = await Tournament.findOne({ url: urlID },{},{autopopulate : false})
         const idCommitte = tournament.createBy
         const committeData = await User.findById(idCommitte)
-        const userTournamentExist = await Tournament.findOne({ $or: [{ team: req.userID }, { participant: req.userID }, { waitinglist: req.userID }] })
+        const userTournamentExist = await Tournament.findOne({ $or: [{ team: req.userID }, { participant: req.userID }, { waitinglist: req.userID }] },{autopopulate : false})
         const totalWaiting = tournament.participant.length + tournament.waitinglist.length
         try {
             if (user.age >= tournament.age || tournament.age == '' || tournament.age == null || tournament.age == 0) {
@@ -430,13 +429,13 @@ class tournamenController {
                         else {
                             if (user.team.name == null) {
                                 await User.findByIdAndUpdate(req.userID,
-                                    { $set: { 'team.name': name, 'team.phone': phone, 'team.member1': member1, 'team.member2': member2, 'team.tournament': tournament.url } },
+                                    { $set: { 'team.name': name, 'team.phone': phone, 'team.member1': member1, 'team.member2': member2} },
                                     { new: true })
                                 await User.findOneAndUpdate({ _id: idCommitte },
                                     {
                                         $push: {
                                             notification: {
-                                                $each: [{ 'notif': `${user.team.name} was register in tournament ${tournament.name}`, "time": new Date().toLocaleString(), }]
+                                                $each: [{ 'notif': `${user.team.name} was register in tournament ${tournament.url}`, "time": new Date().toLocaleString(), }]
                                             }
                                         }
                                     }, { new: true })
@@ -451,12 +450,11 @@ class tournamenController {
                                 res.status(200).json({ success: true, data: dataTournament })
                             }
                             else if (user.team.name != null) {
-                                await User.findOneAndUpdate({ _id: req.userID }, { $set: { 'team.tournament': tournament.url } }, { new: true })
                                 await User.findOneAndUpdate({ _id: idCommitte },
                                     {
                                         $push: {
                                             notification: {
-                                                $each: [{ 'notif': `${user.team.name} was register in tournament ${tournament.name}`, "time": new Date().toLocaleString(), }]
+                                                $each: [{ 'notif': `${user.team.name} was register in tournament ${tournament.url}`, "time": new Date().toLocaleString(), }]
                                             }
                                         }
                                     }, { new: true })
