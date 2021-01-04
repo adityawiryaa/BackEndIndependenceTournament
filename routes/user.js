@@ -12,8 +12,8 @@ bouncer.blocked = function (req, res, next, remaining)
 };
 
 dataUser.post('/signup',userController.register)
-dataUser.post('/signin',bouncer.block,userController.login)
-// dataUser.post('/signin',userController.login)
+// dataUser.post('/signin',bouncer.block,userController.login)
+dataUser.post('/signin',userController.login)
 bouncer.addresses = { };
 dataUser.post('/create/headman',authentication.adminAuth,userController.createHeadMan)
 dataUser.post('/create/committe',authentication.headManAuth,userController.createCommitte)
