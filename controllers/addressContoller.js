@@ -11,11 +11,11 @@ class addressController {
                 const newAdress = { district, city, province, country, zip }
                 for (let key in newAdress) if (!newAdress[key]) delete newAdress[key]
                 const addressData = await Adress.findOneAndUpdate({ user: req.userID }, newAdress, { new: true })
-                res.status(200).json({ result: true, data: addressData })
+                res.status(200).json({ success : true, data: addressData })
             }
             else {
                 const address = await new Adress({
-                    user: req.userID,district, city, province, country,zip
+                    user: req.userID, district, city, province, country, zip
                 })
                 address.save()
                 res.status(200).json({ success: true, data: address })
@@ -25,8 +25,7 @@ class addressController {
     }
     static async getAdress(req, res, next) {
         try {
-            const addressData = await Adress.findOne({ user: req.userID })
-                .populate('user')
+            const addressData = await Adress.findOne({ user: req.userID }).populate('user')
             res.status(200).json({ success: true, data: addressData })
         }
         catch (e) { next({ name: 'USER_NOT_FOUND' }) }
@@ -37,13 +36,13 @@ class addressController {
             const newAdress = { district, city, province, country, zip }
             for (let key in newAdress) if (!newAdress[key]) delete newAdress[key]
             const addressData = await Adress.findOneAndUpdate({ user: req.userID }, newAdress, { new: true })
-            res.status(200).json({ result: true, data: addressData })
+            res.status(200).json({ success : true, data: addressData })
         }
         catch (e) { next({ name: 'USER_NOT_FOUND' }) }
     }
     static async deleteAddress(req, res, next) {
         if (await Adress.findOneAndDelete({ user: req.userID })) {
-            res.status(200).json({ result: true, message: 'Delete Success' })
+            res.status(200).json({ success : true, message: 'Delete Success' })
         }
         else { next({ name: 'USER_NOT_FOUND' }) }
     }
