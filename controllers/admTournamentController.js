@@ -366,7 +366,7 @@ class tournamenController {
     static async deleteTournament(req, res, next) {
         const { tournamentID } = req.params
         try {
-            const tournament = await Tournament.findOneAndDelete({ createBy: req.userID, _id: tournamentID },{},{autopopulate : false})
+            const tournament = await Tournament.findOneAndDelete({ createBy: req.userID, _id: tournamentID })
             res.status(200).json({ success: true, message: 'Delete tournament success' })
         }
         catch { next({ name: 'TOURNAMENT_FAILED' }) }
@@ -419,7 +419,7 @@ class tournamenController {
         const tournament = await Tournament.findOne({ url: urlID },{},{autopopulate : false})
         const idCommitte = tournament.createBy
         const committeData = await User.findById(idCommitte)
-        const userTournamentExist = await Tournament.findOne({ $or: [{ team: req.userID }, { participant: req.userID }, { waitinglist: req.userID }] },{autopopulate : false})
+        const userTournamentExist = await Tournament.findOne({ $or: [{ team: req.userID }, { participant: req.userID }, { waitinglist: req.userID }] },{},{autopopulate : false})
         const totalWaiting = tournament.participant.length + tournament.waitinglist.length
         try {
             if (user.age >= tournament.age || tournament.age == '' || tournament.age == null || tournament.age == 0) {
@@ -435,7 +435,7 @@ class tournamenController {
                                     {
                                         $push: {
                                             notification: {
-                                                $each: [{ 'notif': `${user.team.name} was register in tournament ${tournament.url}`, "time": new Date().toLocaleString(), }]
+                                                $each: [{ 'notif': `${name} was register in tournament ${tournament.url}`, "time": new Date().toLocaleString(), }]
                                             }
                                         }
                                     }, { new: true })
