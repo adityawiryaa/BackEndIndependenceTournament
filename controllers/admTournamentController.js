@@ -389,7 +389,7 @@ class tournamenController {
                                 {
                                     $push: {
                                         notification: {
-                                            $each: [{ 'notif': `${user.username} was register in tournament ${tournament.url}`, "time": new Date().toLocaleString(), }]
+                                            $each: [{ 'notif': `${user.username} mendaftar pada turnament ${tournament.url}`, "time": new Date().toLocaleString(), }]
                                         }
                                     }
                                 }, { new: true })
@@ -435,7 +435,7 @@ class tournamenController {
                                     {
                                         $push: {
                                             notification: {
-                                                $each: [{ 'notif': `${name} was register in tournament ${tournament.url}`, "time": new Date().toLocaleString(), }]
+                                                $each: [{ 'notif': `${name} mendaftar pada turnament ${tournament.url}`, "time": new Date().toLocaleString(), }]
                                             }
                                         }
                                     }, { new: true })
@@ -454,7 +454,7 @@ class tournamenController {
                                     {
                                         $push: {
                                             notification: {
-                                                $each: [{ 'notif': `${user.team.name} was register in tournament ${tournament.url}`, "time": new Date().toLocaleString(), }]
+                                                $each: [{ 'notif': `${user.team.name} mendaftar pada turnament ${tournament.url}`, "time": new Date().toLocaleString(), }]
                                             }
                                         }
                                     }, { new: true })
@@ -520,7 +520,7 @@ class tournamenController {
                         {
                             $push: {
                                 notification: {
-                                    $each: [{ 'notif': `You was accept in tournament ${tournament.name} ,Good Luck!`, "time": new Date().toLocaleString(), }]
+                                    $each: [{ 'notif': `Kamu bergabung pada turnament ${tournament.url} ,Good Luck!`, "time": new Date().toLocaleString(), }]
                                 }
                             }
                         },
@@ -626,7 +626,7 @@ class tournamenController {
                         {
                             $push: {
                                 notification: {
-                                    $each: [{ 'notif': `You was accept in tournament ${tournament.name} ,Good Luck!`, "time": new Date().toLocaleString() }]
+                                    $each: [{ 'notif': `Kamu diterima pada turnament ${tournament.url} ,Good Luck!`, "time": new Date().toLocaleString() }]
                                 }
                             }
                         },
