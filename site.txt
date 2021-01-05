@@ -1,0 +1,22 @@
+FrontEnd Deploy : 
+https://jakartatournament.netlify.app/home
+
+Model : 
+Admin,
+headman : Lurah,
+committe : Panitia,
+User
+
+Akun Admin : 
+email : admin@gmail.com
+pass : 12345678
+
+Admin membuat => 
+Game
+Lurah : headman
+
+Lurah membuat =>
+Panitia : Committe
+
+Panitia membuat => 
+tournament
