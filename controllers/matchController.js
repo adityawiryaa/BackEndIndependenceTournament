@@ -98,7 +98,7 @@ class matchController {
                             if (tournament.stage2.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user1, "winner.$.second": user2, } }
+                                    { $set: { "winner.$.first": user1, "winner.$.second": user2,waitinglist : [] } }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -133,7 +133,7 @@ class matchController {
                             if (tournament.stage2.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user2, "winner.$.second": user1, } }
+                                    { $set: { "winner.$.first": user2, "winner.$.second": user1, waitinglist : []} }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -198,7 +198,7 @@ class matchController {
                             if (tournament.stage3.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user1, "winner.$.second": user2, }, }
+                                    { $set: { "winner.$.first": user1, "winner.$.second": user2, waitinglist : []}, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -232,7 +232,7 @@ class matchController {
                             if (tournament.stage3.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user2, "winner.$.second": user1, }, }
+                                    { $set: { "winner.$.first": user2, "winner.$.second": user1, waitinglist : []}, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -296,7 +296,7 @@ class matchController {
                             if (tournament.stage4.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user1, "winner.$.second": user2, }, }
+                                    { $set: { "winner.$.first": user1, "winner.$.second": user2, waitinglist : []}, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -331,7 +331,7 @@ class matchController {
                             if (tournament.stage4.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user2, "winner.$.second": user1, }, }
+                                    { $set: { "winner.$.first": user2, "winner.$.second": user1,waitinglist : [] }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -395,7 +395,7 @@ class matchController {
                             if (tournament.stage5.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user1, "winner.$.second": user2, }, }
+                                    { $set: { "winner.$.first": user1, "winner.$.second": user2,waitinglist : [] }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -430,7 +430,7 @@ class matchController {
                             if (tournament.stage5.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user2, "winner.$.second": user1, }, }
+                                    { $set: { "winner.$.first": user2, "winner.$.second": user1,waitinglist : [] }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -493,7 +493,7 @@ class matchController {
                             if (tournament.stage6.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user1, "winner.$.second": user2, }, }
+                                    { $set: { "winner.$.first": user1, "winner.$.second": user2, waitinglist : []}, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -528,7 +528,7 @@ class matchController {
                             if (tournament.stage6.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user2, "winner.$.second": user1, }, }
+                                    { $set: { "winner.$.first": user2, "winner.$.second": user1,waitinglist : [] }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -593,7 +593,7 @@ class matchController {
                             if (tournament.stage7.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user1, "winner.$.second": user2, }, }
+                                    { $set: { "winner.$.first": user1, "winner.$.second": user2,waitinglist : [] }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -628,7 +628,7 @@ class matchController {
                             if (tournament.stage7.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null, 'winner.second': null },
-                                    { $set: { "winner.$.first": user2, "winner.$.second": user1, }, }
+                                    { $set: { "winner.$.first": user2, "winner.$.second": user1,waitinglist : [] }, }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                             }
@@ -821,7 +821,7 @@ class matchController {
                     if (tournament.ffaStage2.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null},
-                                    { $set: { "winner.$.first": winner} }
+                                    { $set: { "winner.$.first": winner,waitinglist : []} }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                     }
@@ -920,7 +920,7 @@ class matchController {
                     if (tournament.ffaStage3.length == 1) {
                                 await Tournament.findOneAndUpdate({ url: urlID }, { $set: { status: 'complete' } }, { new: true })
                                 const final = await Tournament.findOneAndUpdate({ url: urlID, 'winner.first': null},
-                                    { $set: { "winner.$.first": winner} }
+                                    { $set: { "winner.$.first": winner,waitinglist : []} }
                                     , { new: true })
                                 res.status(200).json({ success: true, data: final })
                     }
