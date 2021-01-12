@@ -520,7 +520,7 @@ class tournamenController {
                         {
                             $push: {
                                 notification: {
-                                    $each: [{ 'notif': `Kamu bergabung pada turnament ${tournament.url} ,Good Luck!`, "time": new Date().toLocaleString(), }]
+                                    $each: [{ 'notif': `Kamu bergabung pada turnament ${urlID} ,Good Luck!`, "time": new Date().toLocaleString(), }]
                                 }
                             }
                         },
@@ -626,7 +626,7 @@ class tournamenController {
                         {
                             $push: {
                                 notification: {
-                                    $each: [{ 'notif': `Kamu diterima pada turnament ${tournament.url} ,Good Luck!`, "time": new Date().toLocaleString() }]
+                                    $each: [{ 'notif': `Kamu diterima pada turnament ${urlID} ,Good Luck!`, "time": new Date().toLocaleString() }]
                                 }
                             }
                         },
@@ -675,7 +675,7 @@ class tournamenController {
                         {
                             $push: {
                                 notification: {
-                                    $each: [{ 'notif': `You was Reject in tournament ${tournament.name} ,Sorry`, "time": new Date().toLocaleString() }]
+                                    $each: [{ 'notif': `You was Reject in tournament ${urlID} ,Sorry`, "time": new Date().toLocaleString() }]
                                 }
                             }
                         },
