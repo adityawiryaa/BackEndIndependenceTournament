@@ -389,7 +389,7 @@ class tournamenController {
                                 {
                                     $push: {
                                         notification: {
-                                            $each: [{ 'notif': `${user.username} mendaftar pada turnament ${tournament.url}`, "time": new Date().toLocaleString(), }]
+                                            $each: [{ 'notif': `${user.username} mendaftar pada turnament ${urlID}`, "time": new Date().toLocaleString(), }]
                                         }
                                     }
                                 }, { new: true })
@@ -435,7 +435,7 @@ class tournamenController {
                                     {
                                         $push: {
                                             notification: {
-                                                $each: [{ 'notif': `${name} mendaftar pada turnament ${tournament.url}`, "time": new Date().toLocaleString(), }]
+                                                $each: [{ 'notif': `${name} mendaftar pada turnament ${urlID}`, "time": new Date().toLocaleString(), }]
                                             }
                                         }
                                     }, { new: true })
@@ -454,7 +454,7 @@ class tournamenController {
                                     {
                                         $push: {
                                             notification: {
-                                                $each: [{ 'notif': `${user.team.name} mendaftar pada turnament ${tournament.url}`, "time": new Date().toLocaleString(), }]
+                                                $each: [{ 'notif': `${user.team.name} mendaftar pada turnament ${urlID}`, "time": new Date().toLocaleString(), }]
                                             }
                                         }
                                     }, { new: true })
