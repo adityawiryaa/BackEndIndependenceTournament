@@ -2,7 +2,7 @@ const express = require('express')
 const dataUser = express.Router()
 const userController = require('../controllers/userController')
 const authentication = require('../middleware/authentication')
-let bouncer = require ("express-bouncer")(600000,600000,5);
+let bouncer = require ("express-bouncer")(600000,600000,10);
 
 bouncer.whitelist.push ("127.0.0.1");
 bouncer.blocked = function (req, res, next, remaining)
@@ -12,6 +12,7 @@ bouncer.blocked = function (req, res, next, remaining)
 };
 
 dataUser.post('/signup',userController.register)
+// dataUser.post('/signin',userController.login)
 dataUser.post('/signin',bouncer.block,userController.login)
 bouncer.addresses = { };
 dataUser.post('/create/headman',authentication.adminAuth,userController.createHeadMan)
